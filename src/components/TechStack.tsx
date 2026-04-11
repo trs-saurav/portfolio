@@ -106,7 +106,6 @@ export default function TechStack() {
             >
               {/* Left label */}
               <div style={{
-                backgrounds: 'var(--surface-container-high)',
                 borderRight: '1px solid rgba(255,255,255,0.04)',
                 padding: '1.5rem 1.25rem',
                 display: 'flex',
