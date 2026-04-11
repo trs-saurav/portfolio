@@ -1,26 +1,297 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ── Stitch Tonal Surface Stack ─────────────────── */
+  --background:              #0c0e12;
+  --surface:                 #0c0e12;
+  --surface-container-low:   #111318;
+  --surface-container:       #171a1f;
+  --surface-container-high:  #1d2025;
+  --surface-container-high2: #23262c;
+  --surface-bright:          #292c33;
+
+  /* ── Color Tokens ───────────────────────────────── */
+  --foreground:       #f6f6fc;
+  --on-surface-var:   #aaabb0;
+  --outline:          #74757a;
+  --outline-variant:  #46484d;
+
+  --primary-neon:     #81ecff;
+  --primary-dim:      #00d4ec;
+  --secondary-neon:   #c180ff;
+  --tertiary:         #ff6daf;
+
+  /* ── Legacy aliases kept for compatibility ───────── */
+  --glass-bg:     rgba(23,26,31,0.75);
+  --glass-border: rgba(255,255,255,0.06);
+  --glass-blur:   0px;
+
+  /* ── Typography ─────────────────────────────────── */
+  --font-space-grotesk: 'Space Grotesk', sans-serif;
+  --font-manrope:       'Space Grotesk', sans-serif; /* unified to Space Grotesk */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ── Base ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
-  background: var(--background);
+  margin: 0;
+  padding: 0;
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-space-grotesk), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-align: left; /* Stitch: left-aligned body copy */
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-space-grotesk), sans-serif;
+  letter-spacing: -0.02em;
+  margin: 0;
+  font-weight: 700;
+}
+
+/* ── Text Gradient ───────────────────────────────────── */
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Tonal Panels — 0px radius, no explicit borders ─── */
+/* Use these instead of glass-panel for the new system */
+.tonal-low    { background: var(--surface-container-low); }
+.tonal-mid    { background: var(--surface-container); }
+.tonal-high   { background: var(--surface-container-high); }
+.tonal-highest{ background: var(--surface-container-high2); }
+
+/* ── Glass Panel (legacy — 0px radius now) ───────────── */
+.glass-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 0;                 /* Stitch: no rounded corners */
+  box-shadow: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-panel.hover-glow:hover {
+  border-color: rgba(129,236,255,0.15);
+  box-shadow: 0 0 40px rgba(129,236,255,0.08);
+  transform: translateY(-4px);
+}
+
+/* ── HUD Container ───────────────────────────────────── */
+.hud-container {
+  background: var(--surface-container);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 0;                 /* Stitch: 0px */
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Ghost Pill → Ghost Chip (square now) ────────────── */
+.glass-pill {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--outline-variant);
+  border-radius: 0;                 /* Stitch: 0px */
+  padding: 6px 14px;
+  transition: all 0.2s ease;
+}
+
+.glass-pill:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--primary-neon);
+}
+
+/* ── Buttons ─────────────────────────────────────────── */
+.btn-primary {
+  background: var(--primary-neon);
+  color: #003840;
+  border: none;
+  border-radius: 0;                 /* Stitch: square */
+  padding: 14px 32px;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 24px rgba(129,236,255,0.2);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 0 40px rgba(129,236,255,0.35);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid rgba(70,72,77,0.5);
+  border-radius: 0;
+  padding: 13px 32px;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-ghost:hover {
+  background: var(--surface-bright);
+  border-color: var(--outline);
+}
+
+/* ── Kinetic / Display Type ──────────────────────────── */
+.kinetic-text {
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+}
+
+/* ── HUD Tag (metadata label) ────────────────────────── */
+.hud-tag {
+  font-family: var(--font-space-grotesk);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: var(--primary-neon);
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+/* ── Terminal Input ──────────────────────────────────── */
+.terminal-input {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--outline-variant);
+  border-radius: 0;
+  padding: 10px 0 10px 24px;
+  color: var(--foreground);
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s ease;
+  position: relative;
+}
+
+.terminal-input:focus {
+  border-bottom-color: var(--primary-neon);
+  box-shadow: 0 4px 20px rgba(129,236,255,0.06);
+}
+
+.terminal-field {
+  position: relative;
+}
+
+.terminal-field::before {
+  content: '> _';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary-neon);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.terminal-field.textarea-field::before {
+  top: 14px;
+  transform: none;
+}
+
+/* ── Layout Utilities ────────────────────────────────── */
+.section-full {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 2rem;
+  box-sizing: border-box;
+}
+
+.content-wrapper {
+  width: 80vw;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* ── Neon Bloom Shadow ───────────────────────────────── */
+.bloom-cyan   { box-shadow: 0 0 40px -5px rgba(129,236,255,0.08); }
+.bloom-purple { box-shadow: 0 0 40px -5px rgba(193,128,255,0.08); }
+
+/* ── Left Accent Bar ─────────────────────────────────── */
+.accent-left-cyan   { border-left: 2px solid rgba(129,236,255,0.35); }
+.accent-left-purple { border-left: 2px solid rgba(193,128,255,0.35); }
+
+/* ── Scrollbar ───────────────────────────────────────── */
+::-webkit-scrollbar { display: none; }
+
+/* ── Scrolling Marquee ───────────────────────────────── */
+.marquee-left, .marquee-right {
+  display: inline-block;
+  white-space: nowrap;
+  animation: scroll-left 40s linear infinite;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: clamp(2rem, 6vw, 5rem);
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  opacity: 0.03;
+  text-transform: uppercase;
+}
+.marquee-right { animation-name: scroll-right; }
+
+@keyframes scroll-left {
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(-33.33%); }
+}
+@keyframes scroll-right {
+  0%   { transform: translateX(-33.33%); }
+  100% { transform: translateX(0%); }
+}
+
+/* ── Scanline (hidden by default) ────────────────────── */
+.scanline { display: none; }
+
+/* ── Glitch ──────────────────────────────────────────── */
+.glitched-text:hover {
+  animation: glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite;
+}
+@keyframes glitch {
+  0%   { transform: translate(0); }
+  20%  { transform: translate(-2px, 2px); }
+  40%  { transform: translate(-2px, -2px); }
+  60%  { transform: translate(2px, 2px); }
+  80%  { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+/* ── Pulse dot ───────────────────────────────────────── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+/* ── Responsive ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  .content-wrapper { width: 92vw; }
+  .section-full { padding: 0 1rem; }
 }
