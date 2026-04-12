@@ -14,7 +14,7 @@ export default function Footer() {
   return (
     <footer
       style={{
-        width: '100vw',
+        width: '100%',
         background: 'var(--surface-container-low)',
         borderTop: '1px solid rgba(255,255,255,0.04)',
         padding: '0 2rem',

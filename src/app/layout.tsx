@@ -1,17 +1,23 @@
 import type { Metadata } from 'next';
-import { Space_Grotesk, Manrope } from 'next/font/google';
+import { Orbitron, Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 
-const spaceGrotesk = Space_Grotesk({ 
+const orbitron = Orbitron({
   subsets: ['latin'],
-  variable: '--font-space-grotesk',
-  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-orbitron',
+  weight: ['400', '500', '600', '700', '900'],
 });
 
-const manrope = Manrope({ 
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-manrope',
-  weight: ['400', '500', '600', '700'],
+  variable: '--font-inter',
+  weight: ['300', '400', '500', '600'],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains',
+  weight: ['400', '500', '700'],
 });
 
 export const metadata: Metadata = {
@@ -21,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${manrope.variable}`}>
+    <html lang="en" className={`${orbitron.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
       <body>{children}</body>
     </html>
   );

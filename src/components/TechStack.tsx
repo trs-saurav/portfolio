@@ -58,7 +58,7 @@ const STACK: { category: string; color: string; items: { name: string; tag: stri
 
 export default function TechStack() {
   return (
-    <section id="techstack" style={{ width: '100vw', padding: '0 2rem', boxSizing: 'border-box' }}>
+    <section id="techstack" style={{ width: '100%', padding: '0 2rem', boxSizing: 'border-box' }}>
       <style>{`
         @media (max-width: 768px) {
           .tech-row { grid-template-columns: 1fr !important; }

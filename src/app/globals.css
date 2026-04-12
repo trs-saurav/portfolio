@@ -1,34 +1,42 @@
 @import 'tailwindcss';
 
+@theme {
+  --font-orbitron: var(--font-orbitron);
+  --font-inter: var(--font-inter);
+  --font-jetbrains: var(--font-jetbrains);
+  --color-primary: #14ffec;
+  --color-surface-dim: #0D1117;
+}
 :root {
   /* ── Stitch Tonal Surface Stack ─────────────────── */
-  --background:              #0c0e12;
-  --surface:                 #0c0e12;
-  --surface-container-low:   #111318;
-  --surface-container:       #171a1f;
-  --surface-container-high:  #1d2025;
-  --surface-container-high2: #23262c;
-  --surface-bright:          #292c33;
+  --background:              #0D1117;
+  --surface:                 #0D1117;
+  --surface-container-low:   rgba(255, 255, 255, 0.02);
+  --surface-container:       rgba(255, 255, 255, 0.05);
+  --surface-container-high:  rgba(255, 255, 255, 0.08);
+  --surface-container-high2: rgba(13, 17, 23, 0.9);
+  --surface-bright:          rgba(255, 255, 255, 0.1);
 
   /* ── Color Tokens ───────────────────────────────── */
-  --foreground:       #f6f6fc;
-  --on-surface-var:   #aaabb0;
-  --outline:          #74757a;
-  --outline-variant:  #46484d;
+  --foreground:       #E6EDF3;
+  --on-surface-var:   #8B949E;
+  --outline:          #30363D;
+  --outline-variant:  rgba(20, 255, 236, 0.2);
 
-  --primary-neon:     #81ecff;
-  --primary-dim:      #00d4ec;
-  --secondary-neon:   #c180ff;
+  --primary-neon:     #14ffec;
+  --primary-dim:      rgba(20, 255, 236, 0.5);
+  --secondary-neon:   #ffabf3;
   --tertiary:         #ff6daf;
 
-  /* ── Legacy aliases kept for compatibility ───────── */
-  --glass-bg:     rgba(23,26,31,0.75);
-  --glass-border: rgba(255,255,255,0.06);
-  --glass-blur:   0px;
+  /* ── Glassmorphism ───────── */
+  --glass-bg:     rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(20, 255, 236, 0.2);
+  --glass-blur:   12px;
 
   /* ── Typography ─────────────────────────────────── */
-  --font-space-grotesk: 'Space Grotesk', sans-serif;
-  --font-manrope:       'Space Grotesk', sans-serif; /* unified to Space Grotesk */
+  --font-orbitron: var(--font-orbitron, 'sans-serif');
+  --font-inter: var(--font-inter, 'sans-serif');
+  --font-jetbrains: var(--font-jetbrains, 'monospace');
 }
 
 /* ── Base ───────────────────────────────────────────── */
@@ -39,16 +47,17 @@ body {
   padding: 0;
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-inter);
   -webkit-font-smoothing: antialiased;
   text-align: left; /* Stitch: left-aligned body copy */
 }
 
 h1, h2, h3, h4 {
-  font-family: var(--font-space-grotesk), sans-serif;
-  letter-spacing: -0.02em;
+  font-family: var(--font-orbitron);
+  letter-spacing: 0.05em;
   margin: 0;
   font-weight: 700;
+  text-transform: uppercase;
 }
 
 /* ── Text Gradient ───────────────────────────────────── */
@@ -67,21 +76,23 @@ h1, h2, h3, h4 {
 .tonal-high   { background: var(--surface-container-high); }
 .tonal-highest{ background: var(--surface-container-high2); }
 
-/* ── Glass Panel (legacy — 0px radius now) ───────────── */
+/* ── Glass Panel (Cyber-Engineer glassmorphism) ───────────── */
 .glass-panel {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  border-radius: 0;                 /* Stitch: no rounded corners */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 4px; /* subtle radius */
   box-shadow: none;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 }
 
 .glass-panel.hover-glow:hover {
-  border-color: rgba(129,236,255,0.15);
-  box-shadow: 0 0 40px rgba(129,236,255,0.08);
-  transform: translateY(-4px);
+  border-color: rgba(20, 255, 236, 0.4);
+  box-shadow: 0 0 20px rgba(20, 255, 236, 0.1);
+  transform: translateY(-5px);
 }
 
 /* ── HUD Container ───────────────────────────────────── */
@@ -110,33 +121,33 @@ h1, h2, h3, h4 {
 /* ── Buttons ─────────────────────────────────────────── */
 .btn-primary {
   background: var(--primary-neon);
-  color: #003840;
-  border: none;
+  color: #0D1117;
+  border: 1px solid var(--primary-neon);
   border-radius: 0;                 /* Stitch: square */
   padding: 14px 32px;
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-orbitron);
   font-weight: 700;
   font-size: 0.75rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.25s ease;
-  box-shadow: 0 0 24px rgba(129,236,255,0.2);
+  box-shadow: 0 0 16px rgba(20,255,236,0.3);
 }
 
 .btn-primary:hover {
-  filter: brightness(1.08);
-  box-shadow: 0 0 40px rgba(129,236,255,0.35);
-  transform: translateY(-1px);
+  filter: brightness(1.1);
+  box-shadow: 0 0 24px rgba(20,255,236,0.5);
+  transform: translateY(-2px);
 }
 
 .btn-ghost {
-  background: transparent;
-  color: var(--foreground);
-  border: 1px solid rgba(70,72,77,0.5);
+  background: rgba(20, 255, 236, 0.05);
+  color: var(--primary-neon);
+  border: 1px solid rgba(20, 255, 236, 0.3);
   border-radius: 0;
   padding: 13px 32px;
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-orbitron);
   font-weight: 700;
   font-size: 0.75rem;
   letter-spacing: 0.15em;
@@ -152,7 +163,7 @@ h1, h2, h3, h4 {
 
 /* ── Kinetic / Display Type ──────────────────────────── */
 .kinetic-text {
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-orbitron);
   font-weight: 900;
   text-transform: uppercase;
   line-height: 0.92;
@@ -161,28 +172,27 @@ h1, h2, h3, h4 {
 
 /* ── HUD Tag (metadata label) ────────────────────────── */
 .hud-tag {
-  font-family: var(--font-space-grotesk);
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.25em;
+  font-family: var(--font-jetbrains);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
   color: var(--primary-neon);
   text-transform: uppercase;
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 /* ── Terminal Input ──────────────────────────────────── */
 .terminal-input {
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid var(--outline-variant);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--outline-variant);
   border-radius: 0;
-  padding: 10px 0 10px 24px;
-  color: var(--foreground);
-  font-family: var(--font-space-grotesk), sans-serif;
+  padding: 12px 16px 12px 24px;
+  color: var(--primary-neon);
+  font-family: var(--font-jetbrains);
   font-size: 0.9rem;
   outline: none;
   width: 100%;
-  transition: border-color 0.2s ease;
+  transition: all 0.2s ease;
   position: relative;
 }
 

@@ -182,7 +182,7 @@ export default function ProjectsAndStats() {
   return (
     <section
       id="projects"
-      style={{ width: '100vw', padding: '0 2rem', boxSizing: 'border-box', minHeight: '100vh' }}
+      style={{ width: '100%', padding: '0 2rem', boxSizing: 'border-box', minHeight: '100vh' }}
     >
       <style>{`
         @media (max-width: 768px) {
@@ -322,7 +322,7 @@ export default function ProjectsAndStats() {
         >
           {/* Heatmap toolbar */}
           <div className="heat-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem 1.75rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
               <span className="hud-tag">ACTIVE_DAYS_STREAM</span>
               {/* Toggle */}
               <div style={{ display: 'flex', background: 'var(--surface-container-high)', padding: '3px' }}>
@@ -357,13 +357,13 @@ export default function ProjectsAndStats() {
           </div>
 
           {/* Grid */}
-          <div style={{ padding: '1.25rem 1.75rem 1.75rem' }}>
+          <div className="hide-scroll" style={{ padding: '1.25rem 1.75rem 1.75rem', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
             <motion.div
               key={heatSrc}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.35 }}
-              style={{ display: 'grid', gridTemplateColumns: 'repeat(52, 1fr)', gap: 2 }}
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(52, 1fr)', gap: 2, minWidth: '700px' }}
             >
               {Array.from({ length: 52 }, (_, week) => (
                 <div key={week} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>

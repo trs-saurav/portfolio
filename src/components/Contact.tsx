@@ -50,14 +50,14 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" style={{ width: '100vw', padding: '0 2rem', boxSizing: 'border-box' }}>
+    <section id="contact" style={{ width: '100%', padding: '0 2rem', boxSizing: 'border-box' }}>
       <div style={{ width: '80vw', maxWidth: 1200, margin: '0 auto', paddingTop: '6rem', paddingBottom: '4rem' }}>
 
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.6 }}
           style={{ marginBottom: '3rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(129,236,255,0.35)' }}>
           <span className="hud-tag" style={{ display: 'block', marginBottom: '0.4rem' }}>SIGNAL_PROTOCOL // UPLINK</span>
-          <h2 className="kinetic-text" style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', color: 'var(--foreground)' }}>ESTABLISH_CONNECTION</h2>
+          <h2 className="kinetic-text" style={{ fontSize: 'clamp(1.8rem, 7vw, 4rem)', color: 'var(--foreground)', overflowWrap: 'break-word' }}>ESTABLISH_<wbr />CONNECTION</h2>
         </motion.div>
 
         {/* 3-column grid — equal height rows via CSS grid */}
@@ -219,11 +219,6 @@ export default function Contact() {
           </motion.div>
         </div>
 
-        {/* Footer bar */}
-        <div style={{ marginTop: '1rem', background: 'var(--surface-container-high)', padding: '0.8rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span className="hud-tag" style={{ opacity: 0.25 }}>© 2026 // SAURAV_KUMAR</span>
-          <span className="hud-tag" style={{ opacity: 0.25 }}>RESPONSE_TIME &lt; 24H</span>
-        </div>
       </div>
       <style>{CSS}</style>
     </section>

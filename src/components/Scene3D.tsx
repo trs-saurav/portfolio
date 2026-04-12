@@ -12,7 +12,6 @@ import {
 } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import * as THREE from 'three';
-import GamerController from '@/components/GamerController';
 
 /* ─────────────────────────────────────────────────────────────
    Camera Rig — driven by native scroll progress
@@ -150,11 +149,6 @@ export default function Scene3D() {
       <pointLight position={[8,  8,  4]}  intensity={4} color="#8ff5ff" />
       <pointLight position={[-8, -8, -4]} intensity={3} color="#d674ff" />
       <Stars radius={180} depth={50} count={3500} factor={4} saturation={0} fade speed={0.5} />
-      <CoreOrb />
-      <OrbitalRings />
-      <group position={[5, 0, -2]} scale={0.6}>
-        <GamerController />
-      </group>
       <Grid
         infiniteGrid
         fadeDistance={50}

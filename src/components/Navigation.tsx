@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const NAV_ITEMS = [
-  { id: 'hero',       label: 'HOME' },
+  { id: 'home',       label: 'HOME' },
   { id: 'about',      label: 'ABOUT' },
   { id: 'techstack',  label: 'EXP' },
   { id: 'projects',   label: 'WORK' },
@@ -38,7 +38,7 @@ export default function Navigation() {
       });
     };
     const iv = setInterval(() => {
-      if (document.getElementById('hero')) { setup(); clearInterval(iv); }
+      if (document.getElementById('home')) { setup(); clearInterval(iv); }
     }, 800);
     return () => { clearInterval(iv); observer.disconnect(); };
   }, []);
@@ -57,90 +57,35 @@ export default function Navigation() {
 
   return (
     <>
-      <style>{`
-        @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.35}}
-        @media (max-width: 768px) {
-          .desktop-only { display: none !important; }
-          .mobile-only { display: flex !important; }
-        }
-        @media (min-width: 769px) {
-          .mobile-only { display: none !important; }
-        }
-        
-        .hamburger-line { width: 24px; height: 2px; background-color: var(--foreground); transition: all 0.3s ease; }
-        .hamburger-active .line-1 { transform: translateY(6px) rotate(45deg); background-color: var(--primary-neon); }
-        .hamburger-active .line-2 { opacity: 0; }
-        .hamburger-active .line-3 { transform: translateY(-6px) rotate(-45deg); background-color: var(--primary-neon); }
-      `}</style>
       <motion.header
         initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          zIndex: 1000,
-          background: 'rgba(12,14,18,0.92)',
-          backdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255,255,255,0.05)',
-          display: 'flex',
-          alignItems: 'stretch',
-          justifyContent: 'space-between',
-          height: 56,
-        }}
+        className="fixed top-0 left-0 w-full z-50 bg-[#0D1117]/90 backdrop-blur-xl border-b border-white/5 flex items-stretch justify-between h-14"
       >
         {/* ── Left: Identity ──────────────────── */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: '0 1.5rem',
-          borderLeft: '2px solid rgba(129,236,255,0.5)',
-          borderRight: '1px solid rgba(255,255,255,0.05)',
-          gap: '0.75rem',
-          minWidth: 220,
-        }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
-            <span style={{ color: 'var(--foreground)', fontWeight: 900, fontSize: '0.85rem', letterSpacing: '0.06em', fontFamily: 'var(--font-space-grotesk)', lineHeight: 1 }}>
+        <div className="flex items-center px-6 border-l-2 border-primary/50 border-r border-white/5 gap-3 min-w-[220px]">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-gray-100 font-black text-[13px] tracking-wide font-orbitron leading-none">
               SAURAV_KUMAR
             </span>
-            <span className="hud-tag" style={{ opacity: 0.5 }}>FULL_STACK_DEV // DEL</span>
+            <span className="font-jetbrains text-[10px] tracking-[0.2em] text-[#14ffec]/50 uppercase">FULL_STACK_DEV // DEL</span>
           </div>
-          <div style={{ width: 5, height: 5, background: '#4ade80', borderRadius: '50%', boxShadow: '0 0 8px #4ade80', animation: 'pulse-dot 2s ease-in-out infinite', flexShrink: 0 }} />
+          <div className="w-1.5 h-1.5 bg-green-400 rounded-full shadow-[0_0_8px_#4ade80] animate-pulse shrink-0" />
         </div>
 
         {/* ── Center: Nav items (Desktop) ─────── */}
-        <nav className="desktop-only" style={{ flex: 1, display: 'flex', alignItems: 'stretch', justifyContent: 'center' }}>
+        <nav className="hidden md:flex flex-1 items-stretch justify-center">
           {NAV_ITEMS.map(({ id, label }) => {
             const isActive = active === id;
             return (
               <button
                 key={id}
                 onClick={() => scroll(id)}
-                style={{
-                  background: isActive ? 'rgba(129,236,255,0.05)' : 'transparent',
-                  border: 'none',
-                  borderBottom: isActive ? '2px solid var(--primary-neon)' : '2px solid transparent',
-                  borderTop: '2px solid transparent',
-                  color: isActive ? 'var(--primary-neon)' : 'var(--outline)',
-                  padding: '0 1.5rem',
-                  fontSize: '0.62rem',
-                  fontWeight: 800,
-                  letterSpacing: '0.2em',
-                  fontFamily: 'var(--font-space-grotesk)',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                }}
-                onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = 'var(--foreground)'; }}
-                onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = 'var(--outline)'; }}
+                className={`px-6 flex items-center gap-2 border-t-2 border-transparent border-b-2 text-[10px] font-extrabold tracking-widest font-orbitron uppercase cursor-pointer transition-colors duration-200 ${isActive ? 'bg-[#14ffec]/5 border-b-[#14ffec] text-[#14ffec]' : 'bg-transparent border-b-transparent text-gray-400 hover:text-gray-200 hover:bg-white/5'}`}
               >
                 {isActive && (
-                  <span style={{ width: 4, height: 4, background: 'var(--primary-neon)', borderRadius: '50%', flexShrink: 0 }} />
+                  <span className="w-1 h-1 bg-[#14ffec] rounded-full shrink-0" />
                 )}
                 {label}
               </button>
@@ -149,23 +94,16 @@ export default function Navigation() {
         </nav>
 
         {/* ── Right: Socials + Scroll (Desktop) ─ */}
-        <div className="desktop-only" style={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: '0 1.5rem',
-          borderLeft: '1px solid rgba(255,255,255,0.05)',
-          borderRight: '2px solid rgba(193,128,255,0.4)',
-          gap: '1.25rem',
-        }}>
+        <div className="hidden md:flex items-center px-6 border-l border-white/5 border-r-2 border-purple-400/40 gap-5">
           {/* Scroll progress */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', alignItems: 'flex-end' }}>
-            <span className="hud-tag" style={{ opacity: 0.35 }}>SYNC_LEVEL</span>
-            <div style={{ width: 60, height: 2, background: 'rgba(255,255,255,0.06)' }}>
-              <div style={{ height: '100%', width: `${scrollPct}%`, background: 'var(--primary-neon)', transition: 'width 0.3s ease' }} />
+          <div className="flex flex-col gap-1 items-end">
+            <span className="font-jetbrains text-[10px] tracking-[0.2em] text-[#14ffec]/35 uppercase">SYNC_LEVEL</span>
+            <div className="w-[60px] h-[2px] bg-white/5">
+              <div className="h-full bg-primary transition-all duration-300" style={{ width: `${scrollPct}%` }} />
             </div>
           </div>
 
-          <div style={{ width: 1, height: 24, background: 'rgba(255,255,255,0.06)' }} />
+          <div className="w-px h-6 bg-white/5" />
 
           {/* Social icons */}
           {SOCIAL_ICONS.map(({ label, href, path }) => (
@@ -175,26 +113,24 @@ export default function Navigation() {
               target="_blank"
               rel="noreferrer"
               title={label}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.45, transition: 'opacity 0.2s' }}
-              onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.opacity = '1')}
-              onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.opacity = '0.45')}
+              className="flex items-center justify-center opacity-45 hover:opacity-100 transition-opacity duration-200 text-gray-200"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--foreground)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                 <path d={path} />
               </svg>
             </a>
           ))}
 
-          <div style={{ width: 1, height: 24, background: 'rgba(255,255,255,0.06)' }} />
+          <div className="w-px h-6 bg-white/5" />
 
           {/* Resume */}
           <a
             href="/resume.pdf"
             download
-            style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: '0.1rem' }}
+            className="flex flex-col gap-0.5 no-underline group"
           >
-            <span className="hud-tag" style={{ opacity: 0.35, transition: 'opacity 0.2s' }}>ACCESS_POINT</span>
-            <span style={{ color: 'var(--secondary-neon)', fontSize: '0.62rem', fontWeight: 800, letterSpacing: '0.15em', transition: 'color 0.2s' }}>
+            <span className="font-jetbrains text-[10px] tracking-[0.2em] text-[#14ffec]/35 uppercase group-hover:text-[#14ffec]/60 transition-colors">ACCESS_POINT</span>
+            <span className="text-[#c180ff] text-[10px] font-extrabold tracking-[0.15em] group-hover:text-[#d3a3ff] transition-colors font-orbitron">
               MANIFEST_PDF
             </span>
           </a>
@@ -202,13 +138,12 @@ export default function Navigation() {
 
         {/* ── Mobile Hamburger Button ─────── */}
         <button
-          className={`mobile-only \${mobileMenuOpen ? 'hamburger-active' : ''}`}
+          className="flex md:hidden flex-col justify-center items-center gap-1 w-14 h-14 bg-transparent border-none border-l border-white/5 cursor-pointer"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          style={{ width: 60, height: 56, display: 'none', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '4px', background: 'transparent', border: 'none', borderLeft: '1px solid rgba(255,255,255,0.05)', cursor: 'pointer' }}
         >
-          <div className="hamburger-line line-1" />
-          <div className="hamburger-line line-2" />
-          <div className="hamburger-line line-3" />
+          <div className={`w-6 h-0.5 transition-all duration-300 ${mobileMenuOpen ? 'translate-y-1.5 rotate-45 bg-primary' : 'bg-gray-200'}`} />
+          <div className={`w-6 h-0.5 bg-gray-200 transition-all duration-300 ${mobileMenuOpen ? 'opacity-0' : 'opacity-100'}`} />
+          <div className={`w-6 h-0.5 transition-all duration-300 ${mobileMenuOpen ? '-translate-y-1.5 -rotate-45 bg-primary' : 'bg-gray-200'}`} />
         </button>
       </motion.header>
 
@@ -219,17 +154,16 @@ export default function Navigation() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="mobile-only"
-            style={{ position: 'fixed', top: 56, left: 0, width: '100%', height: 'calc(100vh - 56px)', background: 'rgba(12,14,18,0.98)', backdropFilter: 'blur(20px)', zIndex: 999, display: 'flex', flexDirection: 'column', padding: '2rem' }}
+            className="flex md:hidden fixed top-14 left-0 w-full h-[calc(100vh-56px)] bg-[#0D1117]/95 backdrop-blur-xl z-[99] flex-col p-8"
           >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: 1 }}>
+            <div className="flex flex-col gap-4 flex-1">
               {NAV_ITEMS.map(({ id, label }) => {
                 const isActive = active === id;
                 return (
                   <button
                     key={id}
                     onClick={() => scroll(id)}
-                    style={{ background: isActive ? 'rgba(129,236,255,0.08)' : 'transparent', border: 'none', borderLeft: isActive ? '4px solid var(--primary-neon)' : '4px solid transparent', padding: '1rem', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '1rem', color: isActive ? 'var(--primary-neon)' : 'var(--outline)', fontSize: '1rem', fontWeight: 800, letterSpacing: '0.2em', fontFamily: 'var(--font-space-grotesk)', textTransform: 'uppercase' }}
+                    className={`text-left p-4 flex items-center gap-4 text-base font-extrabold tracking-widest font-orbitron uppercase border-l-4 transition-colors duration-200 ${isActive ? 'bg-[#14ffec]/10 border-l-[#14ffec] text-[#14ffec]' : 'bg-transparent border-transparent text-gray-400 hover:text-gray-200 hover:bg-white/5'}`}
                   >
                     {label}
                   </button>
@@ -238,17 +172,17 @@ export default function Navigation() {
             </div>
 
             {/* Mobile Nav Footer (Icons & Resume) */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '2rem' }}>
-              <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center' }}>
+            <div className="flex flex-col gap-8 border-t border-white/10 pt-8 mt-auto">
+              <div className="flex gap-6 justify-center">
                 {SOCIAL_ICONS.map(({ label, href, path }) => (
-                  <a key={label} href={href} target="_blank" rel="noreferrer" title={label} style={{ color: 'var(--outline)' }}>
+                  <a key={label} href={href} target="_blank" rel="noreferrer" title={label} className="text-gray-500 hover:text-primary transition-colors">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                       <path d={path} />
                     </svg>
                   </a>
                 ))}
               </div>
-              <a href="/resume.pdf" download style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', color: '#003840', background: 'var(--primary-neon)', padding: '1rem', fontWeight: 900, textDecoration: 'none', letterSpacing: '0.15em' }}>
+              <a href="/resume.pdf" download className="flex justify-center items-center gap-2 text-[#0D1117] bg-primary p-4 font-black tracking-[0.15em] hover:bg-white transition-colors uppercase font-orbitron">
                 MANIFEST_PDF (RESUME)
               </a>
             </div>

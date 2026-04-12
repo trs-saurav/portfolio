@@ -53,9 +53,6 @@ export default function Hero() {
       >
         <div className="local-scanline"></div>
 
-        {/* Ambient Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#e9feff]/5 rounded-full blur-[120px] pointer-events-none block"></div>
-
         {/* Main Grid Wrapper */}
         <motion.div
           initial="hidden"
