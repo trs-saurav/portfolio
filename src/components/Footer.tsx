@@ -26,7 +26,7 @@ export default function Footer() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '2rem', alignItems: 'start', marginBottom: '2.5rem', flexWrap: 'wrap' }} className="footer-top">
           {/* Brand */}
           <div>
-            <div style={{ paddingLeft: '1.25rem', borderLeft: '2px solid rgba(129,236,255,0.4)', marginBottom: '1rem' }}>
+            <div style={{ paddingLeft: '1.25rem', borderLeft: '2px solid rgba(0,255,65,0.4)', marginBottom: '1rem' }}>
               <span style={{ color: 'var(--foreground)', fontWeight: 900, fontSize: '1.1rem', letterSpacing: '0.06em', display: 'block' }}>SAURAV_KUMAR</span>
               <span className="hud-tag" style={{ opacity: 0.5 }}>SYNTHETIC_ARCHITECT // DEL_IN</span>
             </div>
@@ -63,15 +63,15 @@ export default function Footer() {
                   rel="noreferrer"
                   title={s.label}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, background: 'var(--surface-container)', border: '1px solid rgba(255,255,255,0.05)', transition: 'all 0.2s' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(129,236,255,0.08)'; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(129,236,255,0.2)'; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(0,255,65,0.08)'; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(0,255,65,0.2)'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'var(--surface-container)'; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.05)'; }}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--on-surface-var)"><path d={s.path} /></svg>
                 </a>
               ))}
             </div>
-            <a href="/resume.pdf" download style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--secondary-neon)', fontSize: '0.62rem', fontWeight: 800, letterSpacing: '0.18em', textTransform: 'uppercase', textDecoration: 'none', padding: '6px 14px', border: '1px solid rgba(193,128,255,0.25)', transition: 'all 0.2s' }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(193,128,255,0.08)')}
+            <a href="/resume.pdf" download style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--secondary-neon)', fontSize: '0.62rem', fontWeight: 800, letterSpacing: '0.18em', textTransform: 'uppercase', textDecoration: 'none', padding: '6px 14px', border: '1px solid rgba(255,184,108,0.25)', transition: 'all 0.2s' }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,184,108,0.08)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
               ⬇ MANIFEST_PDF
             </a>

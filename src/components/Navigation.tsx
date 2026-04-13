@@ -61,7 +61,7 @@ export default function Navigation() {
         initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="fixed top-0 left-0 w-full z-50 bg-[#0D1117]/90 backdrop-blur-xl border-b border-white/5 flex items-stretch justify-between h-14"
+        className="fixed top-0 left-0 w-full z-50 fluid-glass border-b border-white/5 flex items-stretch justify-between h-14"
       >
         {/* ── Left: Identity ──────────────────── */}
         <div className="flex items-center px-6 border-l-2 border-primary/50 border-r border-white/5 gap-3 min-w-[220px]">
@@ -69,35 +69,41 @@ export default function Navigation() {
             <span className="text-gray-100 font-black text-[13px] tracking-wide font-orbitron leading-none">
               SAURAV_KUMAR
             </span>
-            <span className="font-jetbrains text-[10px] tracking-[0.2em] text-[#14ffec]/50 uppercase">FULL_STACK_DEV // DEL</span>
+            <span className="font-jetbrains text-[10px] tracking-[0.2em] text-[#00ff41]/50 uppercase">FULL_STACK_DEV // DEL</span>
           </div>
           <div className="w-1.5 h-1.5 bg-green-400 rounded-full shadow-[0_0_8px_#4ade80] animate-pulse shrink-0" />
         </div>
 
         {/* ── Center: Nav items (Desktop) ─────── */}
-        <nav className="hidden md:flex flex-1 items-stretch justify-center">
-          {NAV_ITEMS.map(({ id, label }) => {
-            const isActive = active === id;
-            return (
-              <button
-                key={id}
-                onClick={() => scroll(id)}
-                className={`px-6 flex items-center gap-2 border-t-2 border-transparent border-b-2 text-[10px] font-extrabold tracking-widest font-orbitron uppercase cursor-pointer transition-colors duration-200 ${isActive ? 'bg-[#14ffec]/5 border-b-[#14ffec] text-[#14ffec]' : 'bg-transparent border-b-transparent text-gray-400 hover:text-gray-200 hover:bg-white/5'}`}
-              >
-                {isActive && (
-                  <span className="w-1 h-1 bg-[#14ffec] rounded-full shrink-0" />
-                )}
-                {label}
-              </button>
-            );
-          })}
+        <nav className="hidden md:flex flex-1 items-center justify-center">
+          <div className="flex items-center p-1 bg-white/5 backdrop-blur-md rounded border border-white/10">
+            {NAV_ITEMS.map(({ id, label }) => {
+              const isActive = active === id;
+              return (
+                <button
+                  key={id}
+                  onClick={() => scroll(id)}
+                  className={`relative px-4 py-1.5 text-[10px] font-extrabold tracking-widest font-orbitron uppercase cursor-pointer transition-colors duration-200 z-10 ${isActive ? 'text-[#0D1117]' : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'}`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="nav-indicator"
+                      className="absolute inset-0 bg-[#00ff41] -z-10 shadow-[0_0_10px_#00ff41]"
+                      transition={{ type: 'spring', bounce: 0.25, stiffness: 130, damping: 15 }}
+                    />
+                  )}
+                  {label}
+                </button>
+              );
+            })}
+          </div>
         </nav>
 
         {/* ── Right: Socials + Scroll (Desktop) ─ */}
-        <div className="hidden md:flex items-center px-6 border-l border-white/5 border-r-2 border-purple-400/40 gap-5">
+        <div className="hidden md:flex items-center px-6 border-l border-white/5 border-r-2 border-orange-400/40 gap-5">
           {/* Scroll progress */}
           <div className="flex flex-col gap-1 items-end">
-            <span className="font-jetbrains text-[10px] tracking-[0.2em] text-[#14ffec]/35 uppercase">SYNC_LEVEL</span>
+            <span className="font-jetbrains text-[10px] tracking-[0.2em] text-[#00ff41]/35 uppercase">SYNC_LEVEL</span>
             <div className="w-[60px] h-[2px] bg-white/5">
               <div className="h-full bg-primary transition-all duration-300" style={{ width: `${scrollPct}%` }} />
             </div>
@@ -129,8 +135,8 @@ export default function Navigation() {
             download
             className="flex flex-col gap-0.5 no-underline group"
           >
-            <span className="font-jetbrains text-[10px] tracking-[0.2em] text-[#14ffec]/35 uppercase group-hover:text-[#14ffec]/60 transition-colors">ACCESS_POINT</span>
-            <span className="text-[#c180ff] text-[10px] font-extrabold tracking-[0.15em] group-hover:text-[#d3a3ff] transition-colors font-orbitron">
+            <span className="font-jetbrains text-[10px] tracking-[0.2em] text-[#00ff41]/35 uppercase group-hover:text-[#00ff41]/60 transition-colors">ACCESS_POINT</span>
+            <span className="text-[#ffb86c] text-[10px] font-extrabold tracking-[0.15em] group-hover:text-[#ff9d00] transition-colors font-orbitron">
               MANIFEST_PDF
             </span>
           </a>
@@ -163,7 +169,7 @@ export default function Navigation() {
                   <button
                     key={id}
                     onClick={() => scroll(id)}
-                    className={`text-left p-4 flex items-center gap-4 text-base font-extrabold tracking-widest font-orbitron uppercase border-l-4 transition-colors duration-200 ${isActive ? 'bg-[#14ffec]/10 border-l-[#14ffec] text-[#14ffec]' : 'bg-transparent border-transparent text-gray-400 hover:text-gray-200 hover:bg-white/5'}`}
+                    className={`text-left p-4 flex items-center gap-4 text-base font-extrabold tracking-widest font-orbitron uppercase border-l-4 transition-colors duration-200 ${isActive ? 'bg-[#00ff41]/10 border-l-[#00ff41] text-[#00ff41]' : 'bg-transparent border-transparent text-gray-400 hover:text-gray-200 hover:bg-white/5'}`}
                   >
                     {label}
                   </button>

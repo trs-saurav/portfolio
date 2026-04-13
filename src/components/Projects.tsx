@@ -66,11 +66,11 @@ export default function Projects() {
                 overflow: 'hidden',
                 transition: 'box-shadow 0.3s ease',
               }}
-              onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 40px -5px rgba(129,236,255,0.08)')}
+              onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 40px -5px rgba(0,255,65,0.08)')}
               onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}
             >
               {/* Large watermark number */}
-              <span style={{ position: 'absolute', top: -12, right: 16, fontSize: '8rem', fontWeight: 900, color: 'rgba(129,236,255,0.04)', fontFamily: 'var(--font-space-grotesk)', lineHeight: 1, userSelect: 'none', pointerEvents: 'none' }}>
+              <span style={{ position: 'absolute', top: -12, right: 16, fontSize: '8rem', fontWeight: 900, color: 'rgba(0,255,65,0.04)', fontFamily: 'var(--font-space-grotesk)', lineHeight: 1, userSelect: 'none', pointerEvents: 'none' }}>
                 {proj.id}
               </span>
 
@@ -84,7 +84,7 @@ export default function Projects() {
               {/* Body */}
               <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', flex: 1, gap: '1.25rem' }}>
                 <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                  <span style={{ padding: '3px 10px', background: 'rgba(129,236,255,0.07)', border: '1px solid rgba(129,236,255,0.15)', color: 'var(--primary-neon)', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.15em' }}>{proj.status}</span>
+                  <span style={{ padding: '3px 10px', background: 'rgba(0,255,65,0.07)', border: '1px solid rgba(0,255,65,0.15)', color: 'var(--primary-neon)', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.15em' }}>{proj.status}</span>
                   <span className="hud-tag" style={{ opacity: 0.35 }}>EST // {proj.date}</span>
                 </div>
 
@@ -105,7 +105,7 @@ export default function Projects() {
                     ACCESS_SOURCE
                   </a>
                   <a href={proj.live} style={{ background: 'var(--primary-neon)', color: '#003840', padding: '8px 20px', fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', textDecoration: 'none', transition: 'filter 0.2s, box-shadow 0.2s' }}
-                    onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.filter = 'brightness(1.08)'; el.style.boxShadow = '0 0 20px rgba(129,236,255,0.3)'; }}
+                    onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.filter = 'brightness(1.08)'; el.style.boxShadow = '0 0 20px rgba(0,255,65,0.3)'; }}
                     onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.filter = 'none'; el.style.boxShadow = 'none'; }}>
                     RUN_DEMO ↗
                   </a>

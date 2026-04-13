@@ -1,17 +1,71 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, Suspense, useLayoutEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
   Stars,
-  Float,
   PerspectiveCamera,
-  MeshDistortMaterial,
-  Sphere,
   Grid,
+  useGLTF,
+  useAnimations,
+  Float,
+  Environment,
 } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import * as THREE from 'three';
+import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib';
+
+// Initialize rect area light shaders
+if (typeof window !== 'undefined') {
+  RectAreaLightUniformsLib.init();
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Avatar & Laptop Component
+   Handles the sitting pose and the Matrix-style screen glow.
+───────────────────────────────────────────────────────────── */
+function DeveloperModel() {
+  // Models must be in the /public folder
+  const avatar = useGLTF('/avatar.glb'); 
+  const laptop = useGLTF('/Laptop.glb');
+  
+  const { animations } = avatar;
+  const { actions, names } = useAnimations(animations, avatar.scene);
+
+  // Activate the sitting pose immediately
+  useLayoutEffect(() => {
+    if (actions && names.length > 0) {
+      actions[names[0]].play().paused = true;
+    }
+  }, [actions, names]);
+
+  return (
+    <group position={[0, -1.8, 0]}> 
+      <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
+        {/* The Avatar */}
+        <primitive object={avatar.scene} scale={1.8} />
+
+        {/* The Laptop (Row 2, Column 1) */}
+        <primitive 
+          object={laptop.scene} 
+          scale={1.4} 
+          position={[0, 1.05, 0.45]} 
+          rotation={[0, Math.PI, 0]} 
+        />
+
+        {/* Matrix-style glow reflecting off the avatar's face */}
+        <rectAreaLight
+          width={2.5}
+          height={1.5}
+          intensity={35}
+          color={'#00ff41'}
+          position={[0, 1.2, 0.4]}
+          rotation={[0, Math.PI, 0]}
+        />
+      </Float>
+    </group>
+  );
+}
 
 /* ─────────────────────────────────────────────────────────────
    Camera Rig — driven by native scroll progress
@@ -23,7 +77,8 @@ function CameraRig() {
   useEffect(() => {
     const onScroll = () => {
       const el = document.documentElement;
-      progress.current = el.scrollTop / (el.scrollHeight - el.clientHeight);
+      const total = el.scrollHeight - el.clientHeight;
+      progress.current = total > 0 ? el.scrollTop / total : 0;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -34,6 +89,7 @@ function CameraRig() {
     const o = progress.current;
     let x = 0, y = 0, z = 10, rotX = 0, rotY = 0;
 
+    // Scroll path logic
     if (o < 0.2) {
       const p = o / 0.2;
       x = THREE.MathUtils.lerp(0, 4, p);
@@ -63,69 +119,29 @@ function CameraRig() {
       z = THREE.MathUtils.lerp(11, 10, p);
     }
 
+    // Safety check: Don't let NaN reach the camera
+    if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z)) {
+       x = 0; y = 0; z = 10;
+    }
+
     cameraRef.current.position.lerp(new THREE.Vector3(x, y, z), 0.04);
-    cameraRef.current.rotation.x = THREE.MathUtils.lerp(cameraRef.current.rotation.x, rotX, 0.04);
-    cameraRef.current.rotation.y = THREE.MathUtils.lerp(cameraRef.current.rotation.y, rotY, 0.04);
+    cameraRef.current.rotation.x = THREE.MathUtils.lerp(cameraRef.current.rotation.x, rotX || 0, 0.04);
+    cameraRef.current.rotation.y = THREE.MathUtils.lerp(cameraRef.current.rotation.y, rotY || 0, 0.04);
   });
 
   return <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, 10]} fov={60} />;
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Core Orb
-───────────────────────────────────────────────────────────── */
-function CoreOrb() {
-  const meshRef = useRef<THREE.Mesh>(null);
-  useFrame(({ clock }) => {
-    if (!meshRef.current) return;
-    const t = clock.getElapsedTime();
-    meshRef.current.rotation.x = Math.sin(t * 0.3) * 0.4;
-    meshRef.current.rotation.y = t * 0.2;
-  });
-  return (
-    <Float speed={1.5} rotationIntensity={0.3} floatIntensity={1.5}>
-      <Sphere ref={meshRef} args={[1.6, 64, 64]} position={[0, 0, 0]}>
-        <MeshDistortMaterial color="#00fbfb" emissive="#009999" emissiveIntensity={1.2} distort={0.35} speed={2} roughness={0.1} metalness={0.9} transparent opacity={0.85} />
-      </Sphere>
-    </Float>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Orbital Rings
-───────────────────────────────────────────────────────────── */
-function OrbitalRings() {
-  const groupRef = useRef<THREE.Group>(null);
-  const outerRef  = useRef<THREE.Mesh>(null);
-  const innerRef  = useRef<THREE.Mesh>(null);
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime();
-    if (groupRef.current)  groupRef.current.rotation.y  = t * 0.08;
-    if (outerRef.current)  outerRef.current.rotation.z  = t * 0.15;
-    if (innerRef.current)  innerRef.current.rotation.x  = t * 0.25;
-  });
-  return (
-    <group ref={groupRef} position={[0, 0, -1]}>
-      <mesh ref={outerRef} rotation={[Math.PI / 2.8, 0.3, 0]}>
-        <torusGeometry args={[3.2, 0.006, 6, 256]} />
-        <meshStandardMaterial color="#d674ff" emissive="#d674ff" emissiveIntensity={4} transparent opacity={0.55} />
-      </mesh>
-      <mesh ref={innerRef} rotation={[Math.PI / 2, 0.6, 0]}>
-        <torusGeometry args={[2.5, 0.008, 6, 256]} />
-        <meshStandardMaterial color="#00fbfb" emissive="#00fbfb" emissiveIntensity={4} transparent opacity={0.55} />
-      </mesh>
-    </group>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Scroll progress bridge — fires native scroll % on event
+   Scroll progress bridge
 ───────────────────────────────────────────────────────────── */
 function ScrollBridge() {
   useEffect(() => {
     const send = () => {
       const el = document.documentElement;
-      const pct = Math.floor((el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100);
+      const total = el.scrollHeight - el.clientHeight;
+      const val = total > 0 ? el.scrollTop / total : 0;
+      const pct = Math.floor(val * 100);
       window.dispatchEvent(new CustomEvent('portfolio-scroll', { detail: pct }));
     };
     window.addEventListener('scroll', send, { passive: true });
@@ -135,19 +151,34 @@ function ScrollBridge() {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Root — Canvas is a FIXED background; HTML sections are native
+   Main Scene Component
 ───────────────────────────────────────────────────────────── */
 export default function Scene3D() {
   return (
     <Canvas
-      style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 0, pointerEvents: 'none' }}
-      dpr={[1, 2]}
-      gl={{ antialias: true }}
+      style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1, pointerEvents: 'none' }}
+      dpr={[1, 1.25]}
+      gl={{ 
+        antialias: false,
+        alpha: true,
+        powerPreference: 'high-performance'
+      }}
     >
       <CameraRig />
-      <ambientLight intensity={0.25} />
-      <pointLight position={[8,  8,  4]}  intensity={4} color="#8ff5ff" />
+      
+      {/* Lights */}
+      <ambientLight intensity={0.5} />
+      <pointLight position={[8, 8, 4]} intensity={4} color="#8ff5ff" />
       <pointLight position={[-8, -8, -4]} intensity={3} color="#d674ff" />
+      
+      {/* 3D Content */}
+      <Suspense fallback={null}>
+        <DeveloperModel />
+        {/* Environment provides the realistic reflections on the laptop */}
+        <Environment preset="night" />
+      </Suspense>
+
+      {/* Background Elements */}
       <Stars radius={180} depth={50} count={3500} factor={4} saturation={0} fade speed={0.5} />
       <Grid
         infiniteGrid
@@ -155,14 +186,17 @@ export default function Scene3D() {
         fadeStrength={8}
         cellSize={1}
         sectionSize={5}
-        sectionColor="#7000ff"
-        cellColor="#00fbfb"
+        sectionColor="#00ff41"
+        cellColor="#004411"
         position={[0, -12, 0]}
       />
+
       <ScrollBridge />
-      <EffectComposer enableNormalPass={false}>
-        <Bloom luminanceThreshold={1.2} mipmapBlur intensity={1.2} radius={0.4} />
-        <Vignette darkness={1.2} offset={0.3} />
+
+      {/* Post-processing effects */}
+      <EffectComposer disableNormalPass={false}>
+        <Bloom luminanceThreshold={1} intensity={1} radius={0.3} />
+        <Vignette darkness={0.8} offset={0.3} />
       </EffectComposer>
     </Canvas>
   );

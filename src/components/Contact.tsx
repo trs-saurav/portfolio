@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { DecryptedText } from './reactbits/DecryptedText';
 
 const NODES = [
   { icon: 'M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.041-1.416-4.041-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z', name: 'GITHUB',     sub: 'SRC_REPOSITORIES / SYSTEM_ARCHITECTURE', href: 'https://github.com/trs-saurav' },
@@ -11,7 +12,7 @@ const NODES = [
 
 const CSS = `
   @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
-  .corner-bracket{position:absolute;width:14px;height:14px;border-color:rgba(129,236,255,0.8);opacity:0;transition:opacity 0.2s;}
+  .corner-bracket{position:absolute;width:14px;height:14px;border-color:rgba(0,255,65,0.8);opacity:0;transition:opacity 0.2s;}
   .corner-tl{top:-1px;left:-1px;border-top:2px solid;border-left:2px solid;}
   .corner-tr{top:-1px;right:-1px;border-top:2px solid;border-right:2px solid;}
   .corner-bl{bottom:-1px;left:-1px;border-bottom:2px solid;border-left:2px solid;}
@@ -55,9 +56,11 @@ export default function Contact() {
 
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.6 }}
-          style={{ marginBottom: '3rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(129,236,255,0.35)' }}>
+          style={{ marginBottom: '3rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(0,255,65,0.35)' }}>
           <span className="hud-tag" style={{ display: 'block', marginBottom: '0.4rem' }}>SIGNAL_PROTOCOL // UPLINK</span>
-          <h2 className="kinetic-text" style={{ fontSize: 'clamp(1.8rem, 7vw, 4rem)', color: 'var(--foreground)', overflowWrap: 'break-word' }}>ESTABLISH_<wbr />CONNECTION</h2>
+          <h2 className="kinetic-text" style={{ fontSize: 'clamp(1.8rem, 7vw, 4rem)', color: 'var(--foreground)', overflowWrap: 'break-word' }}>
+            <DecryptedText text="ESTABLISH_CONNECTION" maxIterations={12} speed={30} />
+          </h2>
         </motion.div>
 
         {/* 3-column grid — equal height rows via CSS grid */}
@@ -93,7 +96,7 @@ export default function Contact() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.55, delay: 0.07 }}
             style={{ display: 'flex', flexDirection: 'column' }}>
             {/* Terminal window */}
-            <div style={{ background: 'linear-gradient(135deg,rgba(129,236,255,0.06),transparent)', padding: 1, marginBottom: '0.5rem', display: 'flex', flex: 1 }}>
+            <div style={{ background: 'linear-gradient(135deg,rgba(0,255,65,0.06),transparent)', padding: 1, marginBottom: '0.5rem', display: 'flex', flex: 1 }}>
               <div style={{ background: 'var(--surface)', padding: '1.75rem 2rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
                 {/* Title bar */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(70,72,77,0.45)', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
@@ -104,7 +107,7 @@ export default function Contact() {
                   <div style={{ display: 'flex', gap: '0.35rem' }}>
                     <div style={{ width: 9, height: 9, background: 'var(--outline-variant)' }} />
                     <div style={{ width: 9, height: 9, background: 'var(--outline-variant)' }} />
-                    <div style={{ width: 9, height: 9, background: 'var(--primary-neon)', boxShadow: '0 0 6px rgba(129,236,255,0.5)' }} />
+                    <div style={{ width: 9, height: 9, background: 'var(--primary-neon)', boxShadow: '0 0 6px rgba(0,255,65,0.5)' }} />
                   </div>
                 </div>
 
@@ -166,11 +169,11 @@ export default function Contact() {
 
             {/* Map card */}
             <div style={{ background: 'var(--surface-container-low)', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', inset: 0, border: '1px solid rgba(129,236,255,0.12)', zIndex: 10, pointerEvents: 'none' }} />
+              <div style={{ position: 'absolute', inset: 0, border: '1px solid rgba(0,255,65,0.12)', zIndex: 10, pointerEvents: 'none' }} />
               <div style={{ height: 160, overflow: 'hidden', position: 'relative' }}>
                 <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?w=600&q=80" alt="Delhi"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(1) brightness(0.45) contrast(1.2)', display: 'block' }} />
-                <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(0deg,rgba(129,236,255,0.03) 0px,transparent 1px,transparent 4px)', pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(0deg,rgba(0,255,65,0.03) 0px,transparent 1px,transparent 4px)', pointerEvents: 'none' }} />
                 <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '45%', background: 'linear-gradient(to top,var(--surface-container-low),transparent)', pointerEvents: 'none' }} />
               </div>
               <div style={{ padding: '1rem 1.25rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>

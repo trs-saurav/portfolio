@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { DecryptedText } from './reactbits/DecryptedText';
 
 /* ── Projects data ─────────────────────────────────────── */
 const PROJECTS = [
@@ -49,9 +50,9 @@ const PROJECTS = [
 
 /* ── Stat data ─────────────────────────────────────────── */
 const LIVE_STATS = [
-  { label: 'GITHUB_REPOS',     key: 'repos',     color: 'var(--primary-neon)',   accent: 'rgba(129,236,255,0.1)' },
-  { label: 'GH_FOLLOWERS',     key: 'followers', color: 'var(--primary-neon)',   accent: 'rgba(129,236,255,0.07)' },
-  { label: 'LEETCODE_SOLVED',  key: 'leetcode',  color: 'var(--secondary-neon)', accent: 'rgba(193,128,255,0.1)' },
+  { label: 'GITHUB_REPOS',     key: 'repos',     color: 'var(--primary-neon)',   accent: 'rgba(0,255,65,0.1)' },
+  { label: 'GH_FOLLOWERS',     key: 'followers', color: 'var(--primary-neon)',   accent: 'rgba(0,255,65,0.07)' },
+  { label: 'LEETCODE_SOLVED',  key: 'leetcode',  color: 'var(--secondary-neon)', accent: 'rgba(255,184,108,0.1)' },
   { label: 'ACCEPTANCE_RATE',  key: 'acc',       color: 'var(--foreground)',      accent: 'rgba(246,246,252,0.04)' },
   { label: 'AAA_TITLES_DONE',  key: 'aaa',       color: '#ff6daf',               accent: 'rgba(255,109,175,0.1)' },
 ];
@@ -85,22 +86,7 @@ export default function ProjectsAndStats() {
   const [ghHeat, setGhHeat] = useState<number[]>(FALLBACK_GH_HEAT);
   const [lcHeat, setLcHeat] = useState<number[]>(FALLBACK_LC_HEAT);
 
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  const handleScroll = () => {
-    if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      const maxScroll = scrollWidth - clientWidth;
-      setScrollProgress(maxScroll > 0 ? scrollLeft / maxScroll : 0);
-    }
-  };
-
-  const scrollByAmount = (amount: number) => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: amount, behavior: 'smooth' });
-    }
-  };
+  // Unused horizontal scroll handlers removed
 
   useEffect(() => {
     // GitHub Profile Stats
@@ -119,7 +105,7 @@ export default function ProjectsAndStats() {
       .then(d => {
         if (d.contributions) {
            const last364 = d.contributions.slice(-364);
-           const padded = [...Array(Math.max(0, 364 - last364.length)).fill(0), ...last364.map((c: any) => Math.min(4, c.level))];
+           const padded = [...Array(Math.max(0, 364 - last364.length)).fill(0), ...last364.map((c: { level: number }) => Math.min(4, c.level))];
            setGhHeat(padded);
         }
       })
@@ -144,10 +130,11 @@ export default function ProjectsAndStats() {
                     const arr = new Array(364).fill(0);
                     const now = Math.floor(Date.now() / 1000);
                     const daySecs = 86400;
-                    Object.entries(calData).forEach(([timestamp, count]: [string, any]) => {
+                    Object.entries(calData).forEach(([timestamp, count]: [string, unknown]) => {
+                       const c = count as number;
                        const daysAgo = Math.floor((now - parseInt(timestamp)) / daySecs);
                        if (daysAgo >= 0 && daysAgo < 364) {
-                           arr[363 - daysAgo] = count > 3 ? 3 : count > 0 ? (count > 1 ? 2 : 1) : 0;
+                           arr[363 - daysAgo] = c > 3 ? 3 : c > 0 ? (c > 1 ? 2 : 1) : 0;
                        }
                     });
                     setLcHeat(arr);
@@ -197,34 +184,62 @@ export default function ProjectsAndStats() {
         viewport={{ once: false, amount: 0.1 }}
         style={{ width: '80vw', maxWidth: 1200, margin: '0 auto', paddingTop: '6rem', paddingBottom: '4rem' }}
       >
-        {/* ══ PROJECTS ════════════════════════════════════════════ */}
+        {/* ══ PROJECTS SECTION CONTAINER ══════════════════════════ */}
+        <div style={{ position: 'relative', marginBottom: '8rem' }}>
+          {/* ══ PROJECTS HEADER ═════════════════════════════════════ */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
           transition={{ duration: 0.6 }}
-          style={{ marginBottom: '3.5rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(255,109,175,0.4)' }}
+          style={{ 
+            marginBottom: '6rem', 
+            paddingLeft: '1.25rem', 
+            borderLeft: '2px solid rgba(255,109,175,0.4)',
+            position: 'sticky',
+            top: '8vh',
+            zIndex: 100,
+            backdropFilter: 'blur(16px)',
+            background: '#0D1117' // Hardcoded for absolute opacity
+          }}
         >
           <span className="hud-tag" style={{ display: 'block', marginBottom: '0.4rem' }}>DEPLOYMENT_LOG // SECTOR_PROJECTS</span>
-          <h2 className="kinetic-text" style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', color: 'var(--foreground)' }}>
-            MISSION_PROFILE
+          <h2 className="kinetic-text" style={{ fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', color: 'var(--foreground)' }}>
+            <DecryptedText text="MISSION_PROFILE" maxIterations={12} speed={30} />
           </h2>
         </motion.div>
 
-        <div ref={scrollRef} onScroll={handleScroll} className="hide-scroll" style={{ display: 'flex', overflowX: 'auto', gap: '1.25rem', paddingBottom: '1rem', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}>
+        <div className="relative w-full flex flex-col items-center">
           {PROJECTS.map((proj, i) => (
             <motion.div
               key={proj.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.2 }}
-              transition={{ duration: 0.55, delay: i * 0.1 }}
-              style={{ background: 'var(--surface-container)', display: 'flex', flexDirection: 'column', flex: '0 0 auto', width: 'clamp(280px, 80vw, 420px)', scrollSnapAlign: 'start', overflow: 'hidden', position: 'relative', transition: 'box-shadow 0.3s' }}
-              onMouseEnter={e => e.currentTarget.style.boxShadow = '0 0 40px -5px rgba(129,236,255,0.08)'}
+              viewport={{ once: true, margin: "-10%" }}
+              transition={{ duration: 0.6 }}
+              style={{ 
+                background: 'rgba(13, 17, 23, 0.65)', 
+                backdropFilter: 'blur(16px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+                display: 'flex', 
+                flexDirection: 'column', 
+                width: '100%', 
+                maxWidth: '800px',
+                minHeight: '320px',
+                overflow: 'hidden', 
+                position: 'sticky', 
+                top: `calc(35vh + ${i * 40}px)`,
+                marginBottom: i === PROJECTS.length - 1 ? '10vh' : '40vh',
+                transition: 'box-shadow 0.3s',
+                boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 -20px 60px rgba(0,0,0,0.6)',
+                zIndex: i,
+                borderTop: '1px solid rgba(0, 255, 65, 0.1)'
+              }}
+              onMouseEnter={e => e.currentTarget.style.boxShadow = '0 0 40px -5px rgba(0,255,65,0.08)'}
               onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}
             >
               {/* Watermark number */}
-              <span style={{ position: 'absolute', top: -10, right: 12, fontSize: '7rem', fontWeight: 900, color: 'rgba(129,236,255,0.04)', fontFamily: 'var(--font-space-grotesk)', lineHeight: 1, userSelect: 'none', pointerEvents: 'none' }}>{proj.id}</span>
+              <span style={{ position: 'absolute', top: -10, right: 12, fontSize: '7rem', fontWeight: 900, color: 'rgba(0,255,65,0.04)', fontFamily: 'var(--font-space-grotesk)', lineHeight: 1, userSelect: 'none', pointerEvents: 'none' }}>{proj.id}</span>
 
               {/* Header */}
               <div style={{ background: 'var(--surface-container-high)', padding: '1.25rem 1.75rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
@@ -236,7 +251,7 @@ export default function ProjectsAndStats() {
               {/* Body */}
               <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', flex: 1, gap: '1rem' }}>
                 <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                  <span style={{ padding: '2px 9px', background: 'rgba(129,236,255,0.07)', border: '1px solid rgba(129,236,255,0.15)', color: 'var(--primary-neon)', fontSize: '0.56rem', fontWeight: 700, letterSpacing: '0.14em' }}>{proj.status}</span>
+                  <span style={{ padding: '2px 9px', background: 'rgba(0,255,65,0.07)', border: '1px solid rgba(0,255,65,0.15)', color: 'var(--primary-neon)', fontSize: '0.56rem', fontWeight: 700, letterSpacing: '0.14em' }}>{proj.status}</span>
                   <span className="hud-tag" style={{ opacity: 0.35 }}>EST // {proj.date}</span>
                 </div>
                 <p style={{ color: 'var(--on-surface-var)', fontSize: '0.88rem', lineHeight: 1.75, margin: 0, flex: 1 }}>{proj.desc}</p>
@@ -250,7 +265,7 @@ export default function ProjectsAndStats() {
                     ACCESS_SOURCE
                   </a>
                   <a href={proj.href} style={{ background: 'var(--primary-neon)', color: '#003840', padding: '7px 18px', fontSize: '0.62rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', textDecoration: 'none', transition: 'filter 0.2s, box-shadow 0.2s' }}
-                    onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.filter = 'brightness(1.08)'; el.style.boxShadow = '0 0 20px rgba(129,236,255,0.3)'; }}
+                    onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.filter = 'brightness(1.08)'; el.style.boxShadow = '0 0 20px rgba(0,255,65,0.3)'; }}
                     onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.filter = 'none'; el.style.boxShadow = 'none'; }}>
                     RUN_DEMO ↗
                   </a>
@@ -258,20 +273,6 @@ export default function ProjectsAndStats() {
               </div>
             </motion.div>
           ))}
-        </div>
-
-        {/* Carousel Navigation */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4rem', padding: '0 0.5rem' }}>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button onClick={() => scrollByAmount(-350)} style={{ border: '1px solid rgba(129,236,255,0.2)', background: 'transparent', color: 'var(--primary-neon)', width: 36, height: 36, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background='rgba(129,236,255,0.1)'} onMouseLeave={e => e.currentTarget.style.background='transparent'}>
-              &lt;
-            </button>
-            <button onClick={() => scrollByAmount(350)} style={{ border: '1px solid rgba(129,236,255,0.2)', background: 'transparent', color: 'var(--primary-neon)', width: 36, height: 36, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background='rgba(129,236,255,0.1)'} onMouseLeave={e => e.currentTarget.style.background='transparent'}>
-              &gt;
-            </button>
-          </div>
-          <div style={{ flex: 1, maxWidth: '300px', height: '2px', background: 'rgba(255,255,255,0.08)', position: 'relative' }}>
-            <div style={{ width: `${scrollProgress * 100}%`, height: '100%', background: 'var(--primary-neon)', position: 'absolute', left: 0, top: 0, transition: 'width 0.15s ease' }} />
           </div>
         </div>
 
@@ -281,11 +282,11 @@ export default function ProjectsAndStats() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
           transition={{ duration: 0.6 }}
-          style={{ marginBottom: '2.5rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(193,128,255,0.4)' }}
+          style={{ marginTop: '20vh', marginBottom: '2.5rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(255,184,108,0.4)' }}
         >
           <span className="hud-tag" style={{ display: 'block', marginBottom: '0.4rem' }}>TELEMETRY_LOG // BIOMETRIC</span>
           <h2 className="kinetic-text" style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', color: 'var(--foreground)' }}>
-            BIOMETRIC_DATA
+            <DecryptedText text="BIOMETRIC_DATA" maxIterations={12} speed={30} />
           </h2>
         </motion.div>
 
@@ -351,7 +352,7 @@ export default function ProjectsAndStats() {
             </div>
             <div style={{ display: 'flex', gap: 3, alignItems: 'center' }}>
               <span className="hud-tag" style={{ opacity: 0.3, marginRight: '0.4rem' }}>LESS</span>
-              {[0.07, 0.22, 0.5, 1].map((o, i) => <div key={i} style={{ width: 9, height: 9, background: `rgba(129,236,255,${o})` }} />)}
+              {[0.07, 0.22, 0.5, 1].map((o, i) => <div key={i} style={{ width: 9, height: 9, background: `rgba(0,255,65,${o})` }} />)}
               <span className="hud-tag" style={{ opacity: 0.3, marginLeft: '0.4rem' }}>MORE</span>
             </div>
           </div>
@@ -376,8 +377,8 @@ export default function ProjectsAndStats() {
                         title={level > 0 ? `${level} contribution${level > 1 ? 's' : ''}` : 'No activity'}
                         style={{
                           aspectRatio: '1',
-                          background: `rgba(129,236,255,${op})`,
-                          boxShadow: level === 3 ? '0 0 4px rgba(129,236,255,0.35)' : 'none',
+                          background: `rgba(0,255,65,${op})`,
+                          boxShadow: level === 3 ? '0 0 4px rgba(0,255,65,0.35)' : 'none',
                           transition: 'opacity 0.15s',
                           cursor: 'default',
                         }}

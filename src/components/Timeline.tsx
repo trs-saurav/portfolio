@@ -35,7 +35,7 @@ export default function Timeline() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          style={{ marginBottom: '3.5rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(193,128,255,0.35)' }}
+          style={{ marginBottom: '3.5rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(255,184,108,0.35)' }}
         >
           <span className="hud-tag" style={{ display: 'block', marginBottom: '0.5rem' }}>MISSION_CHRONOLOGY // EXP_LOG</span>
           <h2 className="kinetic-text" style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)', color: 'var(--foreground)' }}>
@@ -54,19 +54,19 @@ export default function Timeline() {
               transition={{ duration: 0.6, delay: i * 0.12 }}
               style={{
                 background: i % 2 === 0 ? 'var(--surface-container)' : 'var(--surface-container-low)',
-                borderLeft: '2px solid rgba(129,236,255,0.2)',
+                borderLeft: '2px solid rgba(0,255,65,0.2)',
                 display: 'grid',
                 gridTemplateColumns: '120px 1fr',
                 gap: 0,
                 transition: 'border-color 0.25s',
               }}
-              onMouseEnter={e => (e.currentTarget.style.borderLeftColor = 'rgba(129,236,255,0.7)')}
-              onMouseLeave={e => (e.currentTarget.style.borderLeftColor = 'rgba(129,236,255,0.2)')}
+              onMouseEnter={e => (e.currentTarget.style.borderLeftColor = 'rgba(0,255,65,0.7)')}
+              onMouseLeave={e => (e.currentTarget.style.borderLeftColor = 'rgba(0,255,65,0.2)')}
               className="exp-entry"
             >
               {/* Left gutter — date + ID */}
               <div style={{ background: 'var(--surface-container-high)', padding: '2rem 1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderRight: '1px solid rgba(255,255,255,0.04)' }}>
-                <span style={{ fontSize: '2rem', fontWeight: 900, color: 'rgba(129,236,255,0.12)', fontFamily: 'var(--font-space-grotesk)', lineHeight: 1 }}>{exp.id}</span>
+                <span style={{ fontSize: '2rem', fontWeight: 900, color: 'rgba(0,255,65,0.12)', fontFamily: 'var(--font-space-grotesk)', lineHeight: 1 }}>{exp.id}</span>
                 <div>
                   <span className="hud-tag" style={{ display: 'block', opacity: 0.45, marginBottom: '0.2rem' }}>DATE</span>
                   <span style={{ color: 'var(--outline)', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.08em' }}>{exp.date}</span>
@@ -81,7 +81,7 @@ export default function Timeline() {
                     <h3 style={{ color: 'var(--foreground)', fontSize: 'clamp(1rem,2vw,1.3rem)', fontWeight: 800, margin: 0, letterSpacing: '0.04em' }}>{exp.title}</h3>
                   </div>
                   <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    <span style={{ padding: '3px 10px', background: 'rgba(129,236,255,0.06)', border: '1px solid rgba(129,236,255,0.15)', color: 'var(--primary-neon)', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.15em' }}>{exp.type}</span>
+                    <span style={{ padding: '3px 10px', background: 'rgba(0,255,65,0.06)', border: '1px solid rgba(0,255,65,0.15)', color: 'var(--primary-neon)', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.15em' }}>{exp.type}</span>
                   </div>
                 </div>
 

@@ -1,6 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import TargetCursor from './reactbits/TargetCursor';
 
 const STACK: { category: string; color: string; items: { name: string; tag: string; icon: string }[] }[] = [
   {
@@ -58,7 +60,14 @@ const STACK: { category: string; color: string; items: { name: string; tag: stri
 
 export default function TechStack() {
   return (
-    <section id="techstack" style={{ width: '100%', padding: '0 2rem', boxSizing: 'border-box' }}>
+    <section 
+      id="techstack" 
+      className="group" 
+      style={{ width: '100%', padding: '0 2rem', boxSizing: 'border-box', position: 'relative', cursor: 'none' }}
+    >
+      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <TargetCursor targetSelector=".cursor-target" />
+      </div>
       <style>{`
         @media (max-width: 768px) {
           .tech-row { grid-template-columns: 1fr !important; }
@@ -76,7 +85,7 @@ export default function TechStack() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          style={{ marginBottom: '3.5rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(129,236,255,0.35)' }}
+          style={{ marginBottom: '3.5rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(0,255,65,0.35)' }}
         >
           <span className="hud-tag" style={{ display: 'block', marginBottom: '0.4rem' }}>CAPABILITY_MATRIX // SYSTEM_STACK</span>
           <h2 className="kinetic-text" style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', color: 'var(--foreground)' }}>
@@ -122,6 +131,7 @@ export default function TechStack() {
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1px', padding: '1px' }}>
                 {cat.items.map((tech, ti) => (
                   <motion.div
+                    className="cursor-target"
                     key={tech.name}
                     initial={{ opacity: 0, scale: 0.9 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -139,7 +149,7 @@ export default function TechStack() {
                       position: 'relative',
                       overflow: 'hidden',
                     }}
-                    whileHover={{ backgroundColor: 'var(--surface-bright)' } as any}
+                    whileHover={{ backgroundColor: 'var(--surface-bright)' } as unknown as React.ComponentProps<typeof motion.div>['whileHover']}
                   >
                     <img
                       src={tech.icon}
@@ -176,7 +186,7 @@ export default function TechStack() {
           style={{ marginTop: '1px', background: 'var(--surface-container-high)', padding: '0.9rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
         >
           <span className="hud-tag" style={{ opacity: 0.35 }}>
-            TOTAL_MODULES: {STACK.reduce((a, c) => a + c.items.length, 0)} // CATEGORIES: {STACK.length}
+            TOTAL_MODULES: {STACK.reduce((a, c) => a + c.items.length, 0)} {'//'} CATEGORIES: {STACK.length}
           </span>
           <span className="hud-tag" style={{ opacity: 0.35 }}>STACK_VERSION: 2026.Q2</span>
         </motion.div>

@@ -15,16 +15,16 @@ export default function StatsDashboard() {
   }, []);
 
   const STATS = [
-    { label: 'GITHUB_REPOS',      value: github.public_repos, color: 'var(--primary-neon)',   accent: 'rgba(129,236,255,0.12)' },
-    { label: 'LEETCODE_SOLVED',   value: leetcode.totalSolved, color: 'var(--secondary-neon)', accent: 'rgba(193,128,255,0.12)' },
+    { label: 'GITHUB_REPOS',      value: github.public_repos, color: 'var(--primary-neon)',   accent: 'rgba(0,255,65,0.12)' },
+    { label: 'LEETCODE_SOLVED',   value: leetcode.totalSolved, color: 'var(--secondary-neon)', accent: 'rgba(255,184,108,0.12)' },
     { label: 'ACCEPTANCE_RATE',   value: `${leetcode.acceptanceRate}%`, color: 'var(--foreground)', accent: 'rgba(246,246,252,0.05)' },
     { label: 'AAA_TITLES_DONE',   value: '15+',                color: '#ff6daf',               accent: 'rgba(255,109,175,0.12)' },
   ];
 
-  const HEAT = Array.from({ length: 52 * 7 }, (_, i) => {
+  const [HEAT] = useState(() => Array.from({ length: 52 * 7 }, () => {
     const r = Math.random();
     return r > 0.85 ? 3 : r > 0.7 ? 2 : r > 0.5 ? 1 : 0;
-  });
+  }));
 
   return (
     <section id="stats" className="section-full" style={{ alignItems: 'flex-start', padding: '0 2rem' }}>
@@ -39,7 +39,7 @@ export default function StatsDashboard() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          style={{ marginBottom: '3.5rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(193,128,255,0.35)' }}
+          style={{ marginBottom: '3.5rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(255,184,108,0.35)' }}
         >
           <span className="hud-tag" style={{ display: 'block', marginBottom: '0.5rem' }}>TELEMETRY_LOG // QUANTUM_STATS</span>
           <h2 className="kinetic-text" style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)', color: 'var(--foreground)' }}>
@@ -94,7 +94,7 @@ export default function StatsDashboard() {
             <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
               <span className="hud-tag" style={{ opacity: 0.35, marginRight: '0.5rem' }}>LESS</span>
               {[0.08, 0.25, 0.55, 1].map((o, i) => (
-                <div key={i} style={{ width: 10, height: 10, background: `rgba(129,236,255,${o})` }} />
+                <div key={i} style={{ width: 10, height: 10, background: `rgba(0,255,65,${o})` }} />
               ))}
               <span className="hud-tag" style={{ opacity: 0.35, marginLeft: '0.5rem' }}>MORE</span>
             </div>
@@ -110,8 +110,8 @@ export default function StatsDashboard() {
                       key={day}
                       style={{
                         aspectRatio: '1',
-                        background: `rgba(129,236,255,${op})`,
-                        boxShadow: level === 3 ? '0 0 4px rgba(129,236,255,0.4)' : 'none',
+                        background: `rgba(0,255,65,${op})`,
+                        boxShadow: level === 3 ? '0 0 4px rgba(0,255,65,0.4)' : 'none',
                       }}
                     />
                   );

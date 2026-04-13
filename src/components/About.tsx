@@ -1,6 +1,8 @@
 'use client';
 
 import { motion, easeOut } from 'framer-motion';
+import { DecryptedText } from './reactbits/DecryptedText';
+import { InteractiveLanyard } from './reactbits/Lanyard';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -26,10 +28,10 @@ export default function About() {
         style={{ width: '80vw', maxWidth: 1200, margin: '0 auto', paddingTop: '6rem', paddingBottom: '4rem' }}
       >
         {/* ── Header ─────────────────────────────── */}
-        <motion.div variants={fadeUp} custom={0} style={{ marginBottom: '3rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(129,236,255,0.3)', position: 'relative' }}>
+        <motion.div variants={fadeUp} custom={0} style={{ marginBottom: '3rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(0,255,65,0.3)', position: 'relative' }}>
           <span className="hud-tag" style={{ display: 'block', marginBottom: '0.5rem' }}>USER_IDENTIFICATION // ARCHITECT_LOG</span>
           <h2 className="kinetic-text" style={{ fontSize: 'clamp(3rem, 7vw, 5.5rem)', color: 'var(--foreground)' }}>
-            ABOUT_ME
+            <DecryptedText text="ABOUT_ME" maxIterations={12} speed={30} />
           </h2>
         </motion.div>
 
@@ -42,7 +44,7 @@ export default function About() {
             style={{
               gridColumn: 'span 12',
               background: 'var(--surface-container-low)',
-              borderLeft: '2px solid rgba(129,236,255,0.3)',
+              borderLeft: '2px solid rgba(0,255,65,0.3)',
               padding: '2.5rem',
               position: 'relative',
               overflow: 'hidden',
@@ -64,7 +66,7 @@ export default function About() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
               {[
                 { label: 'STATUS: ACTIVE_CONSTRUCT', color: 'var(--primary-neon)', dot: '#4ade80' },
-                { label: 'LOCATION: LUCKNOW // INDIA', color: 'var(--secondary-neon)', dot: '#c180ff' },
+                { label: 'LOCATION: LUCKNOW // INDIA', color: 'var(--secondary-neon)', dot: '#ffb86c' },
               ].map(b => (
                 <div key={b.label} style={{ background: 'var(--surface-container)', border: '1px solid rgba(255,255,255,0.05)', padding: '5px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ width: 5, height: 5, background: b.dot, borderRadius: '50%', animation: 'pulse-dot 2s ease-in-out infinite' }} />
@@ -74,23 +76,26 @@ export default function About() {
             </div>
           </motion.div>
 
-          {/* Photo — 4 cols */}
+          {/* Interactive Lanyard Badge — 4 cols */}
           <motion.div
             variants={fadeUp} custom={0.08}
-            style={{ gridColumn: 'span 12', minHeight: 220, background: 'var(--surface-container-high)', position: 'relative', overflow: 'hidden' }}
-            className="about-photo"
+            style={{ 
+              gridColumn: 'span 12', 
+              minHeight: 400, 
+              background: 'var(--surface-container-high)', 
+              position: 'relative', 
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+            className="about-photo cursor-crosshair"
           >
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(129,236,255,0.08), transparent)', zIndex: 1 }} />
-            <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAx74DsL8nnyuo_xTJfr_RPOyKV6lmIXrpGBE4_gT1oJguBzEuHNJwD6kI6UJLHjxv6ncoFttzFVuXk3c8KBT9aGRdfrgDk5ynMws5Rx0C2lL-EkVoVVAueXPZdgch8s29UG2nTCv_QhVtThaFYqYM9xm-NBX6ImfqMx8AbM8hhrLotxExozm4Igx-XldxE3b2PYQ9dR4KejPFsBLxm5fAOgcyczJNZIF_gJqKemfKHV5GHD9yrTrF6CNVVmitmrju8CGDWlswbygQ"
-              alt="workspace"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(1)', opacity: 0.4, transition: 'all 0.6s ease', display: 'block', minHeight: 220 }}
-              onMouseEnter={e => { (e.currentTarget as HTMLImageElement).style.filter = 'grayscale(0)'; (e.currentTarget as HTMLImageElement).style.opacity = '1'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLImageElement).style.filter = 'grayscale(1)'; (e.currentTarget as HTMLImageElement).style.opacity = '0.4'; }}
-            />
-            <div style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 2 }}>
-              <span className="hud-tag" style={{ background: 'rgba(0,0,0,0.85)', padding: '3px 8px', border: '1px solid rgba(129,236,255,0.15)', opacity: 1 }}>VISUAL_UID: 0x992B</span>
+            <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 10 }}>
+              <span className="hud-tag" style={{ background: 'rgba(0,0,0,0.85)', padding: '3px 8px', border: '1px solid rgba(0,255,65,0.15)', opacity: 1 }}>AUTHENTICATION_CORE</span>
             </div>
+            <InteractiveLanyard />
           </motion.div>
 
           {/* Academic — 5 cols */}
@@ -129,7 +134,7 @@ export default function About() {
                   <div key={label} style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                     <div className="hud-tag" style={{ opacity: 0.45 }}>{label}</div>
                     <div style={{ color: 'var(--foreground)', fontWeight: 700, fontSize: '0.82rem', letterSpacing: '0.04em' }}>{name}</div>
-                    <div style={{ height: 2, background: 'rgba(129,236,255,0.1)', width: '100%' }}>
+                    <div style={{ height: 2, background: 'rgba(0,255,65,0.1)', width: '100%' }}>
                       <motion.div
                         initial={{ width: 0 }}
                         whileInView={{ width: `${pct}%` }}
@@ -146,7 +151,7 @@ export default function About() {
             <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--surface-container-high)', padding: '0.6rem 1rem', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
               <span className="hud-tag" style={{ opacity: 0.35 }}>TRANSFER_RATE: 1.2 GB/S // ENCRYPTION: AES-256</span>
               <div style={{ display: 'flex', gap: 3 }}>
-                {[1, 1, 0.2].map((o, i) => <div key={i} style={{ width: 4, height: 4, background: `rgba(129,236,255,${o})` }} />)}
+                {[1, 1, 0.2].map((o, i) => <div key={i} style={{ width: 4, height: 4, background: `rgba(0,255,65,${o})` }} />)}
               </div>
             </div>
           </motion.div>

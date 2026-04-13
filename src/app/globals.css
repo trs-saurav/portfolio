@@ -4,7 +4,7 @@
   --font-orbitron: var(--font-orbitron);
   --font-inter: var(--font-inter);
   --font-jetbrains: var(--font-jetbrains);
-  --color-primary: #14ffec;
+  --color-primary: #00ff41;
   --color-surface-dim: #0D1117;
 }
 :root {
@@ -21,16 +21,16 @@
   --foreground:       #E6EDF3;
   --on-surface-var:   #8B949E;
   --outline:          #30363D;
-  --outline-variant:  rgba(20, 255, 236, 0.2);
+  --outline-variant:  rgba(0, 255, 65, 0.2);
 
-  --primary-neon:     #14ffec;
-  --primary-dim:      rgba(20, 255, 236, 0.5);
-  --secondary-neon:   #ffabf3;
-  --tertiary:         #ff6daf;
+  --primary-neon:     #00ff41;
+  --primary-dim:      rgba(0, 255, 65, 0.5);
+  --secondary-neon:   #ffb86c;
+  --tertiary:         #ff9d00;
 
   /* ── Glassmorphism ───────── */
   --glass-bg:     rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(20, 255, 236, 0.2);
+  --glass-border: rgba(0, 255, 65, 0.2);
   --glass-blur:   12px;
 
   /* ── Typography ─────────────────────────────────── */
@@ -80,18 +80,47 @@ h1, h2, h3, h4 {
 .glass-panel {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
   border-radius: 4px; /* subtle radius */
-  box-shadow: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02), 0 8px 32px 0 rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 }
 
+.fluid-glass {
+  background: rgba(13, 17, 23, 0.4);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(0, 255, 65, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 20px 40px rgba(0,0,0,0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.fluid-glass::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 50% 50%, rgba(0, 255, 65, 0.08) 0%, transparent 40%),
+              radial-gradient(circle at 80% 20%, rgba(255, 184, 108, 0.05) 0%, transparent 30%);
+  animation: fluidSpin 15s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes fluidSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .glass-panel.hover-glow:hover {
-  border-color: rgba(20, 255, 236, 0.4);
-  box-shadow: 0 0 20px rgba(20, 255, 236, 0.1);
+  border-color: rgba(0, 255, 65, 0.4);
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
   transform: translateY(-5px);
 }
 
@@ -132,19 +161,19 @@ h1, h2, h3, h4 {
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.25s ease;
-  box-shadow: 0 0 16px rgba(20,255,236,0.3);
+  box-shadow: 0 0 16px rgba(0,255,65,0.3);
 }
 
 .btn-primary:hover {
   filter: brightness(1.1);
-  box-shadow: 0 0 24px rgba(20,255,236,0.5);
+  box-shadow: 0 0 24px rgba(0,255,65,0.5);
   transform: translateY(-2px);
 }
 
 .btn-ghost {
-  background: rgba(20, 255, 236, 0.05);
+  background: rgba(0, 255, 65, 0.05);
   color: var(--primary-neon);
-  border: 1px solid rgba(20, 255, 236, 0.3);
+  border: 1px solid rgba(0, 255, 65, 0.3);
   border-radius: 0;
   padding: 13px 32px;
   font-family: var(--font-orbitron);
@@ -198,7 +227,7 @@ h1, h2, h3, h4 {
 
 .terminal-input:focus {
   border-bottom-color: var(--primary-neon);
-  box-shadow: 0 4px 20px rgba(129,236,255,0.06);
+  box-shadow: 0 4px 20px rgba(0,255,65,0.06);
 }
 
 .terminal-field {
@@ -244,12 +273,12 @@ h1, h2, h3, h4 {
 }
 
 /* ── Neon Bloom Shadow ───────────────────────────────── */
-.bloom-cyan   { box-shadow: 0 0 40px -5px rgba(129,236,255,0.08); }
-.bloom-purple { box-shadow: 0 0 40px -5px rgba(193,128,255,0.08); }
+.bloom-cyan   { box-shadow: 0 0 40px -5px rgba(0,255,65,0.08); }
+.bloom-purple { box-shadow: 0 0 40px -5px rgba(255,184,108,0.08); }
 
 /* ── Left Accent Bar ─────────────────────────────────── */
-.accent-left-cyan   { border-left: 2px solid rgba(129,236,255,0.35); }
-.accent-left-purple { border-left: 2px solid rgba(193,128,255,0.35); }
+.accent-left-cyan   { border-left: 2px solid rgba(0,255,65,0.35); }
+.accent-left-purple { border-left: 2px solid rgba(255,184,108,0.35); }
 
 /* ── Scrollbar ───────────────────────────────────────── */
 ::-webkit-scrollbar { display: none; }
