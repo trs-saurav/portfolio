@@ -86,8 +86,6 @@ export default function ProjectsAndStats() {
   const [ghHeat, setGhHeat] = useState<number[]>(FALLBACK_GH_HEAT);
   const [lcHeat, setLcHeat] = useState<number[]>(FALLBACK_LC_HEAT);
 
-  // Unused horizontal scroll handlers removed
-
   useEffect(() => {
     // GitHub Profile Stats
     fetch('https://api.github.com/users/trs-saurav')
@@ -116,21 +114,18 @@ export default function ProjectsAndStats() {
       .then(r => r.json())
       .then(d => {
          if (d.errors) {
-            // fallback if user not found on alfa
             fetchLeetcodeHeroku();
          } else if (d.totalSolved !== undefined) {
-            setStats(s => ({ ...s, leetcode: d.totalSolved, acc: '—%' })); // alfa doesn't always return acc right away
-            // fetch LC calendar
+            setStats(s => ({ ...s, leetcode: d.totalSolved, acc: '—%' }));
             fetch('https://alfa-leetcode-api.onrender.com/trs-saurav/calendar')
               .then(cr => cr.json())
               .then(cd => {
                  if (cd.submissionCalendar) {
                     const calData = JSON.parse(cd.submissionCalendar);
-                    // generate last 364 days array
                     const arr = new Array(364).fill(0);
                     const now = Math.floor(Date.now() / 1000);
                     const daySecs = 86400;
-                    Object.entries(calData).forEach(([timestamp, count]: [string, unknown]) => {
+                    Object.entries(calData).forEach(([timestamp, count]: [string, any]) => {
                        const c = count as number;
                        const daysAgo = Math.floor((now - parseInt(timestamp)) / daySecs);
                        if (daysAgo >= 0 && daysAgo < 364) {
@@ -158,7 +153,6 @@ export default function ProjectsAndStats() {
           }
         })
         .catch(() => {
-          // Fallback if API is down
           setStats(s => ({ ...s, leetcode: '145+', acc: '68%' }));
         });
     }
@@ -169,7 +163,7 @@ export default function ProjectsAndStats() {
   return (
     <section
       id="projects"
-      style={{ width: '100%', padding: '0 2rem', boxSizing: 'border-box', minHeight: '100vh' }}
+      style={{ width: '100%', padding: '0 2rem', boxSizing: 'border-box', minHeight: '100vh', background: 'transparent' }}
     >
       <style>{`
         @media (max-width: 768px) {
@@ -184,99 +178,75 @@ export default function ProjectsAndStats() {
         viewport={{ once: false, amount: 0.1 }}
         style={{ width: '80vw', maxWidth: 1200, margin: '0 auto', paddingTop: '6rem', paddingBottom: '4rem' }}
       >
-        {/* ══ PROJECTS SECTION CONTAINER ══════════════════════════ */}
+        {/* ══ PROJECTS SECTION ══════════════════════════ */}
         <div style={{ position: 'relative', marginBottom: '8rem' }}>
-          {/* ══ PROJECTS HEADER ═════════════════════════════════════ */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.6 }}
-          style={{ 
-            marginBottom: '6rem', 
-            paddingLeft: '1.25rem', 
-            borderLeft: '2px solid rgba(255,109,175,0.4)',
-            position: 'sticky',
-            top: '8vh',
-            zIndex: 100,
-            backdropFilter: 'blur(16px)',
-            background: '#0D1117' // Hardcoded for absolute opacity
-          }}
-        >
-          <span className="hud-tag" style={{ display: 'block', marginBottom: '0.4rem' }}>DEPLOYMENT_LOG // SECTOR_PROJECTS</span>
-          <h2 className="kinetic-text" style={{ fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', color: 'var(--foreground)' }}>
-            <DecryptedText text="MISSION_PROFILE" maxIterations={12} speed={30} />
-          </h2>
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.6 }}
+            style={{ 
+              marginBottom: '6rem', 
+              paddingLeft: '1.25rem', 
+              borderLeft: '2px solid rgba(255,109,175,0.4)',
+              position: 'sticky',
+              top: '8vh',
+              zIndex: 100,
+              backdropFilter: 'blur(16px)',
+              backgroundColor: 'rgba(13, 17, 23, 0.85)'
+            }}
+          >
+            <span className="hud-tag" style={{ display: 'block', marginBottom: '0.4rem' }}>DEPLOYMENT_LOG // SECTOR_PROJECTS</span>
+            <h2 className="kinetic-text" style={{ fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', color: 'var(--foreground)' }}>
+              <DecryptedText text="MISSION_PROFILE" maxIterations={12} speed={30} />
+            </h2>
+          </motion.div>
 
-        <div className="relative w-full flex flex-col items-center">
-          {PROJECTS.map((proj, i) => (
-            <motion.div
-              key={proj.id}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-10%" }}
-              transition={{ duration: 0.6 }}
-              style={{ 
-                background: 'rgba(13, 17, 23, 0.65)', 
-                backdropFilter: 'blur(16px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-                display: 'flex', 
-                flexDirection: 'column', 
-                width: '100%', 
-                maxWidth: '800px',
-                minHeight: '320px',
-                overflow: 'hidden', 
-                position: 'sticky', 
-                top: `calc(35vh + ${i * 40}px)`,
-                marginBottom: i === PROJECTS.length - 1 ? '10vh' : '40vh',
-                transition: 'box-shadow 0.3s',
-                boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 -20px 60px rgba(0,0,0,0.6)',
-                zIndex: i,
-                borderTop: '1px solid rgba(0, 255, 65, 0.1)'
-              }}
-              onMouseEnter={e => e.currentTarget.style.boxShadow = '0 0 40px -5px rgba(0,255,65,0.08)'}
-              onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}
-            >
-              {/* Watermark number */}
-              <span style={{ position: 'absolute', top: -10, right: 12, fontSize: '7rem', fontWeight: 900, color: 'rgba(0,255,65,0.04)', fontFamily: 'var(--font-space-grotesk)', lineHeight: 1, userSelect: 'none', pointerEvents: 'none' }}>{proj.id}</span>
-
-              {/* Header */}
-              <div style={{ background: 'var(--surface-container-high)', padding: '1.25rem 1.75rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                <span className="hud-tag" style={{ display: 'block', marginBottom: '0.25rem', opacity: 0.4 }}>PROJ_ID // {proj.id}</span>
-                <h3 style={{ color: 'var(--foreground)', fontSize: '1.1rem', fontWeight: 900, margin: 0, letterSpacing: '-0.01em' }}>{proj.name}</h3>
-                <div style={{ color: 'var(--outline)', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', marginTop: '0.15rem' }}>{proj.sub}</div>
-              </div>
-
-              {/* Body */}
-              <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', flex: 1, gap: '1rem' }}>
-                <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                  <span style={{ padding: '2px 9px', background: 'rgba(0,255,65,0.07)', border: '1px solid rgba(0,255,65,0.15)', color: 'var(--primary-neon)', fontSize: '0.56rem', fontWeight: 700, letterSpacing: '0.14em' }}>{proj.status}</span>
-                  <span className="hud-tag" style={{ opacity: 0.35 }}>EST // {proj.date}</span>
+          <div className="relative w-full flex flex-col items-center">
+            {PROJECTS.map((proj, i) => (
+              <motion.div
+                key={proj.id}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-10%" }}
+                transition={{ duration: 0.6 }}
+                style={{ 
+                  background: 'rgba(13, 17, 23, 0.65)', 
+                  backdropFilter: 'blur(16px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  width: '100%', 
+                  maxWidth: '800px',
+                  minHeight: '320px',
+                  overflow: 'hidden', 
+                  position: 'sticky', 
+                  top: `calc(35vh + ${i * 40}px)`,
+                  marginBottom: i === PROJECTS.length - 1 ? '10vh' : '40vh',
+                  boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 -20px 60px rgba(0,0,0,0.6)',
+                  zIndex: i,
+                  borderTop: '1px solid rgba(0, 255, 65, 0.1)'
+                }}
+              >
+                <span style={{ position: 'absolute', top: -10, right: 12, fontSize: '7rem', fontWeight: 900, color: 'rgba(0,255,65,0.04)', fontFamily: 'var(--font-space-grotesk)', lineHeight: 1, userSelect: 'none', pointerEvents: 'none' }}>{proj.id}</span>
+                <div style={{ background: 'var(--surface-container-high)', padding: '1.25rem 1.75rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                  <span className="hud-tag" style={{ display: 'block', marginBottom: '0.25rem', opacity: 0.4 }}>PROJ_ID // {proj.id}</span>
+                  <h3 style={{ color: 'var(--foreground)', fontSize: '1.1rem', fontWeight: 900, margin: 0, letterSpacing: '-0.01em' }}>{proj.name}</h3>
+                  <div style={{ color: 'var(--outline)', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', marginTop: '0.15rem' }}>{proj.sub}</div>
                 </div>
-                <p style={{ color: 'var(--on-surface-var)', fontSize: '0.88rem', lineHeight: 1.75, margin: 0, flex: 1 }}>{proj.desc}</p>
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '0.9rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  {proj.tech.map(t => <span key={t} style={{ color: 'var(--outline)', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase' }}>#{t}</span>)}
+                <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', flex: 1, gap: '1rem' }}>
+                  <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <span style={{ padding: '2px 9px', background: 'rgba(0,255,65,0.07)', border: '1px solid rgba(0,255,65,0.15)', color: 'var(--primary-neon)', fontSize: '0.56rem', fontWeight: 700, letterSpacing: '0.14em' }}>{proj.status}</span>
+                    <span className="hud-tag" style={{ opacity: 0.35 }}>EST // {proj.date}</span>
+                  </div>
+                  <p style={{ color: 'var(--on-surface-var)', fontSize: '0.88rem', lineHeight: 1.75, margin: 0, flex: 1 }}>{proj.desc}</p>
                 </div>
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                  <a href={proj.href} style={{ color: 'var(--outline)', fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.2s' }}
-                    onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.color = 'var(--foreground)')}
-                    onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.color = 'var(--outline)')}>
-                    ACCESS_SOURCE
-                  </a>
-                  <a href={proj.href} style={{ background: 'var(--primary-neon)', color: '#003840', padding: '7px 18px', fontSize: '0.62rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', textDecoration: 'none', transition: 'filter 0.2s, box-shadow 0.2s' }}
-                    onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.filter = 'brightness(1.08)'; el.style.boxShadow = '0 0 20px rgba(0,255,65,0.3)'; }}
-                    onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.filter = 'none'; el.style.boxShadow = 'none'; }}>
-                    RUN_DEMO ↗
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
           </div>
         </div>
 
-        {/* ══ STATS ═══════════════════════════════════════════════ */}
+        {/* ══ STATS SECTION ═══════════════════════════════════════════════ */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -290,100 +260,48 @@ export default function ProjectsAndStats() {
           </h2>
         </motion.div>
 
-        {/* Stat cards row */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px,1fr))', gap: '1px', marginBottom: '1px' }}>
           {LIVE_STATS.map((s, i) => (
-            <motion.div
+            <div
               key={s.label}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false }}
-              transition={{ duration: 0.45, delay: i * 0.07 }}
-              style={{ background: 'var(--surface-container)', padding: '1.75rem', position: 'relative', borderTop: `2px solid ${s.color}`, overflow: 'hidden', transition: 'box-shadow 0.3s' }}
-              onMouseEnter={e => e.currentTarget.style.boxShadow = `0 0 36px -5px ${s.color}22`}
-              onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}
+              style={{ background: 'var(--surface-container)', padding: '1.75rem', position: 'relative', borderTop: `2px solid ${s.color}`, overflow: 'hidden' }}
             >
               <div style={{ position: 'absolute', inset: 0, background: s.accent, pointerEvents: 'none' }} />
-              <div style={{ position: 'absolute', top: 10, right: 10, width: 5, height: 5, background: s.color, borderRadius: '50%', animation: 'pulse-dot 2s ease-in-out infinite', boxShadow: `0 0 6px ${s.color}` }} />
               <span className="hud-tag" style={{ display: 'block', marginBottom: '1rem', position: 'relative', zIndex: 1 }}>{s.label}</span>
-              <p style={{ fontSize: 'clamp(2rem,4vw,3.5rem)', fontWeight: 900, color: s.color, margin: 0, lineHeight: 1, fontFamily: 'var(--font-space-grotesk)', letterSpacing: '-0.03em', textShadow: `0 0 20px ${s.color}44`, position: 'relative', zIndex: 1 }}>
+              <p style={{ fontSize: 'clamp(2rem,4vw,3.5rem)', fontWeight: 900, color: s.color, margin: 0, lineHeight: 1, fontFamily: 'var(--font-space-grotesk)', letterSpacing: '-0.03em', position: 'relative', zIndex: 1 }}>
                 {stats[s.key as keyof Stats]}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        {/* Heatmap with toggle */}
+        {/* Heatmap */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          style={{ background: 'var(--surface-container-low)' }}
+          style={{ background: 'rgba(255, 255, 255, 0.02)', marginTop: '2rem' }}
         >
-          {/* Heatmap toolbar */}
           <div className="heat-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem 1.75rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <span className="hud-tag">ACTIVE_DAYS_STREAM</span>
-              {/* Toggle */}
-              <div style={{ display: 'flex', background: 'var(--surface-container-high)', padding: '3px' }}>
-                {(['github', 'leetcode'] as HeatSrc[]).map(src => (
-                  <button
-                    key={src}
-                    onClick={() => setHeatSrc(src)}
-                    style={{
-                      background: heatSrc === src ? 'var(--primary-neon)' : 'transparent',
-                      color: heatSrc === src ? '#003840' : 'var(--outline)',
-                      border: 'none',
-                      padding: '4px 14px',
-                      fontSize: '0.58rem',
-                      fontWeight: 800,
-                      letterSpacing: '0.15em',
-                      textTransform: 'uppercase',
-                      cursor: 'pointer',
-                      fontFamily: 'var(--font-space-grotesk)',
-                      transition: 'all 0.2s ease',
-                    }}
-                  >
-                    {src === 'github' ? 'GITHUB' : 'LEETCODE'}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 3, alignItems: 'center' }}>
-              <span className="hud-tag" style={{ opacity: 0.3, marginRight: '0.4rem' }}>LESS</span>
-              {[0.07, 0.22, 0.5, 1].map((o, i) => <div key={i} style={{ width: 9, height: 9, background: `rgba(0,255,65,${o})` }} />)}
-              <span className="hud-tag" style={{ opacity: 0.3, marginLeft: '0.4rem' }}>MORE</span>
+              <button onClick={() => setHeatSrc(heatSrc === 'github' ? 'leetcode' : 'github')} style={{ background: 'var(--primary-neon)', border: 'none', padding: '4px 12px', fontSize: '10px', fontWeight: 800, cursor: 'pointer' }}>TOGGLE_SOURCE</button>
             </div>
           </div>
-
-          {/* Grid */}
-          <div className="hide-scroll" style={{ padding: '1.25rem 1.75rem 1.75rem', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+          <div className="hide-scroll" style={{ padding: '1.75rem', overflowX: 'auto' }}>
             <motion.div
               key={heatSrc}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.35 }}
               style={{ display: 'grid', gridTemplateColumns: 'repeat(52, 1fr)', gap: 2, minWidth: '700px' }}
             >
               {Array.from({ length: 52 }, (_, week) => (
                 <div key={week} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   {Array.from({ length: 7 }, (_, day) => {
-                    const level = heat[week * 7 + day];
+                    const level = heat[week * 7 + day] || 0;
                     const op = level === 0 ? 0.06 : level === 1 ? 0.22 : level === 2 ? 0.5 : 1;
-                    return (
-                      <div
-                        key={day}
-                        title={level > 0 ? `${level} contribution${level > 1 ? 's' : ''}` : 'No activity'}
-                        style={{
-                          aspectRatio: '1',
-                          background: `rgba(0,255,65,${op})`,
-                          boxShadow: level === 3 ? '0 0 4px rgba(0,255,65,0.35)' : 'none',
-                          transition: 'opacity 0.15s',
-                          cursor: 'default',
-                        }}
-                      />
-                    );
+                    return <div key={day} style={{ aspectRatio: '1', background: `rgba(0,255,65,${op})` }} />;
                   })}
                 </div>
               ))}

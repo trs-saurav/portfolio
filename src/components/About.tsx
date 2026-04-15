@@ -43,7 +43,8 @@ export default function About() {
             variants={fadeUp} custom={0.05}
             style={{
               gridColumn: 'span 12',
-              background: 'var(--surface-container-low)',
+              background: 'rgba(255, 255, 255, 0.03)',
+              backdropFilter: 'blur(8px)',
               borderLeft: '2px solid rgba(0,255,65,0.3)',
               padding: '2.5rem',
               position: 'relative',
@@ -82,7 +83,8 @@ export default function About() {
             style={{ 
               gridColumn: 'span 12', 
               minHeight: 400, 
-              background: 'var(--surface-container-high)', 
+              background: 'rgba(255, 255, 255, 0.05)', 
+              backdropFilter: 'blur(12px)',
               position: 'relative', 
               overflow: 'hidden',
               display: 'flex',
@@ -101,7 +103,7 @@ export default function About() {
           {/* Academic — 5 cols */}
           <motion.div
             variants={fadeUp} custom={0.1}
-            style={{ gridColumn: 'span 12', background: 'var(--surface-container-high)', padding: '2.5rem', position: 'relative', overflow: 'hidden' }}
+            style={{ gridColumn: 'span 12', background: 'rgba(255, 255, 255, 0.04)', backdropFilter: 'blur(10px)', padding: '2.5rem', position: 'relative', overflow: 'hidden' }}
             className="about-academic"
           >
             <svg style={{ position: 'absolute', right: -24, bottom: -24, opacity: 0.04, width: 130, height: 130 }} viewBox="0 0 24 24" fill="white">
@@ -124,7 +126,7 @@ export default function About() {
           {/* Skills — 7 cols */}
           <motion.div
             variants={fadeUp} custom={0.12}
-            style={{ gridColumn: 'span 12', background: 'var(--surface-container-low)', padding: '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+            style={{ gridColumn: 'span 12', background: 'rgba(13, 17, 23, 0.4)', backdropFilter: 'blur(14px)', padding: '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
             className="about-skills"
           >
             <div>

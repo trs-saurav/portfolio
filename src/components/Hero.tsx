@@ -1,15 +1,122 @@
 'use client';
 
 import { motion, easeOut } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense, useRef } from 'react';
 import { DecryptedText } from './reactbits/DecryptedText';
 import { BlurText } from './reactbits/BlurText';
+
+// --- THREE.JS IMPORTS ---
+import { Canvas, useFrame } from '@react-three/fiber';
+import { useGLTF, Html, Environment, useAnimations } from '@react-three/drei';
+import * as THREE from 'three';
 
 const ITEM = {
   hidden: { opacity: 0, y: 16 },
   visible: (d = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.6, ease: easeOut, delay: d } }),
 };
 
+
+// ─── 3D AVATAR COMPONENT ───
+// Add useAnimations to your imports at the top
+
+function AvatarModel({ url = '/avatar.glb' }) {
+  // Extract animations from the loaded GLTF
+  const { scene, nodes, animations } = useGLTF(url);
+  // Hook up the animations to the scene
+  const { actions } = useAnimations(animations, scene);
+  
+  const [showGreeting, setShowGreeting] = useState(true);
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+
+  // 1. Play Animation & Add a Smile on Load
+  useEffect(() => {
+    // Play the first available animation (the relaxed idle from Avaturn)
+    const actionNames = Object.keys(actions);
+    if (actionNames.length > 0) {
+      const action = actions[actionNames[0]];
+      if (action) {
+        action.play();
+      }
+    }
+
+    // Traverse the model to find the face mesh and activate the smile
+    scene.traverse((child) => {
+      // Check if the mesh has facial morph targets
+      if (child instanceof THREE.Mesh && child.morphTargetDictionary) {
+        // Avaturn uses standard ARKit blendshape names. Let's trigger a smile!
+        const smileLeft = child.morphTargetDictionary['mouthSmileLeft'];
+        const smileRight = child.morphTargetDictionary['mouthSmileRight'];
+        
+        // Set the influence from 0 (neutral) to 0.75 (friendly smile)
+        if (child.morphTargetInfluences) {
+          if (smileLeft !== undefined) child.morphTargetInfluences[smileLeft] = 0.75;
+          if (smileRight !== undefined) child.morphTargetInfluences[smileRight] = 0.75;
+        }
+      }
+    });
+  }, [actions, scene]);
+
+  // Handle the 2-second greeting
+  useEffect(() => {
+    const timer = setTimeout(() => setShowGreeting(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Track global mouse movement
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMouse({
+        x: (e.clientX / window.innerWidth) * 2 - 1,
+        y: -(e.clientY / window.innerHeight) * 2 + 1,
+      });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  // Frame-by-frame head rotation
+  useFrame(() => {
+    // Find the head/neck bone to rotate. 
+    // Note: Avaturn models often use 'Head' or 'Neck'
+    const head = nodes.Head || nodes.Neck || scene.getObjectByName('Head');
+    
+    if (head && !showGreeting) {
+      const targetRotationY = mouse.x * (Math.PI / 3);
+      const targetRotationX = -mouse.y * (Math.PI / 4);
+
+      head.rotation.y = THREE.MathUtils.lerp(head.rotation.y, targetRotationY, 0.05);
+      head.rotation.x = THREE.MathUtils.lerp(head.rotation.x, targetRotationX, 0.05);
+    } else if (head) {
+      // Look straight ahead while greeting
+      head.rotation.set(0, 0, 0);
+    }
+  });
+
+  return (
+    <group dispose={null}>
+      {/* FRAMING FIX: 
+        Scale it up (e.g., 3.5) and push the Y position way down (e.g., -3.5).
+        This forces the legs out of the bottom of your circular container, 
+        giving you that perfect torso-up framing. 
+      */}
+      <primitive object={scene} scale={5.5} position={[0, -8.2, 0]} />
+      
+      {showGreeting && (
+        <Html position={[0, 1.2, 0]} center>
+          <div className="text-[#00ff41] font-mono text-sm tracking-widest bg-[#0a0a0a]/90 px-4 py-2 border border-[#00ff41]/50 shadow-[0_0_15px_rgba(0,255,65,0.2)]">
+            HI_
+          </div>
+        </Html>
+      )}
+    </group>
+  );
+}
+
+// Preload the model for faster rendering
+useGLTF.preload('/avatar.glb');
+
+
+// ─── MAIN HERO COMPONENT ───
 export default function Hero() {
   const [glitch, setGlitch] = useState(false);
 
@@ -36,17 +143,14 @@ export default function Hero() {
             background: repeating-linear-gradient(0deg, rgba(0, 255, 65, 0.15) 0px, rgba(0, 255, 65, 0.15) 1px, transparent 1px, transparent 2px);
         }
       `}</style>
-      
+
       <section
         id="home"
         className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-6 md:px-12 pt-24"
-        style={{
-          color: '#e5e1e4',
-        }}
+        style={{ color: '#e5e1e4', background: 'transparent' }}
       >
         <div className="local-scanline"></div>
 
-        {/* Main Grid Wrapper */}
         <motion.div
           initial="hidden"
           animate="visible"
@@ -84,11 +188,20 @@ export default function Hero() {
               <div className="absolute inset-0 border border-[#00ff41]/20 rounded-full animate-[spin_20s_linear_infinite]"></div>
               <div className="absolute inset-4 border border-[#e9ffe9]/10 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
               <div className="absolute inset-10 border-t-2 border-[#00ff41]/40 rounded-full animate-[spin_8s_linear_infinite]"></div>
-              
-              {/* Invisible touch area to allow model rotation through the UI layer */}
-              <div className="relative w-full h-full p-12 pointer-events-auto cursor-grab active:cursor-grabbing">
+
+              {/* 3D AVATAR CANVAS AREA */}
+              <div className="absolute inset-0 z-10 w-full h-full pointer-events-auto rounded-full overflow-hidden">
                 <div className={`absolute inset-0 glitch-effect opacity-30 z-20 pointer-events-none ${glitch ? 'block' : 'hidden'}`}></div>
-                {/* 3D Model renders behind this via fixed positioning from Scene3D */}
+                
+                <Canvas camera={{ position: [0, 0, 5], fov: 45 }} className="w-full h-full">
+                  <ambientLight intensity={0.8} />
+                  <directionalLight position={[5, 5, 5]} intensity={1.5} color="#e9ffe9" />
+                  <directionalLight position={[-5, 5, -5]} intensity={0.5} color="#00ff41" />
+                  <Environment preset="city" />
+                  <Suspense fallback={null}>
+                    <AvatarModel url="/avatar.glb" />
+                  </Suspense>
+                </Canvas>
               </div>
 
               {/* Compass Metadata */}
@@ -97,6 +210,7 @@ export default function Hero() {
               <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 text-[10px] font-mono text-[#00ff41] hidden sm:block">W_001</div>
               <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 text-[10px] font-mono text-[#00ff41] hidden sm:block">E_001</div>
             </div>
+            
             <div className="text-center space-y-2">
               <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tighter uppercase text-[#e9ffe9]">
                 <DecryptedText text="Saurav Kumar" maxIterations={15} speed={40} />
@@ -143,7 +257,6 @@ export default function Hero() {
             </div>
           </motion.div>
         </motion.div>
-
       </section>
     </>
   );

@@ -53,7 +53,8 @@ export default function Timeline() {
               viewport={{ once: false, amount: 0.3 }}
               transition={{ duration: 0.6, delay: i * 0.12 }}
               style={{
-                background: i % 2 === 0 ? 'var(--surface-container)' : 'var(--surface-container-low)',
+                background: 'rgba(13, 17, 23, 0.45)',
+                backdropFilter: 'blur(12px)',
                 borderLeft: '2px solid rgba(0,255,65,0.2)',
                 display: 'grid',
                 gridTemplateColumns: '120px 1fr',
@@ -102,7 +103,7 @@ export default function Timeline() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          style={{ marginTop: '1px', background: 'var(--surface-container-high)', padding: '1.5rem 2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+          style={{ marginTop: '1px', background: 'rgba(255, 255, 255, 0.04)', backdropFilter: 'blur(10px)', padding: '1.5rem 2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
         >
           <span className="hud-tag" style={{ opacity: 0.35 }}>EXP_LOG_COMPILED // ENTRIES: {EXP.length}</span>
           <a

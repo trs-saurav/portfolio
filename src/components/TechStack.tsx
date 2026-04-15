@@ -104,7 +104,8 @@ export default function TechStack() {
               transition={{ duration: 0.55, delay: ci * 0.08 }}
               className="tech-row"
               style={{
-                background: ci % 2 === 0 ? 'var(--surface-container)' : 'var(--surface-container-low)',
+                background: 'rgba(255, 255, 255, 0.02)',
+                backdropFilter: 'blur(8px)',
                 display: 'grid',
                 gridTemplateColumns: '180px 1fr',
                 borderLeft: `2px solid ${cat.color}22`,
@@ -138,7 +139,8 @@ export default function TechStack() {
                     viewport={{ once: false }}
                     transition={{ duration: 0.4, delay: ci * 0.06 + ti * 0.04 }}
                     style={{
-                      background: 'var(--surface-container-high2)',
+                      background: 'rgba(13, 17, 23, 0.3)',
+                      backdropFilter: 'blur(4px)',
                       padding: '1.25rem 1.5rem',
                       display: 'flex',
                       alignItems: 'center',
@@ -183,7 +185,7 @@ export default function TechStack() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          style={{ marginTop: '1px', background: 'var(--surface-container-high)', padding: '0.9rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+          style={{ marginTop: '1px', background: 'rgba(255, 255, 255, 0.04)', backdropFilter: 'blur(10px)', padding: '0.9rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
         >
           <span className="hud-tag" style={{ opacity: 0.35 }}>
             TOTAL_MODULES: {STACK.reduce((a, c) => a + c.items.length, 0)} {'//'} CATEGORIES: {STACK.length}

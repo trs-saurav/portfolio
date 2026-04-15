@@ -27,7 +27,7 @@ export default function Creative() {
   }, []);
 
   return (
-    <section id="creative" className="w-full relative min-h-screen px-6 md:px-12 py-24 bg-[#0D1117] overflow-hidden">
+    <section id="creative" className="w-full relative min-h-screen px-6 md:px-12 py-24 bg-transparent overflow-hidden">
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}

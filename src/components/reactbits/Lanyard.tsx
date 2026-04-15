@@ -18,6 +18,15 @@ import * as THREE from 'three';
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      meshLineMaterial: any;
+      meshLineGeometry: any;
+    }
+  }
+}
+
 interface LanyardProps {
   position?: [number, number, number];
   gravity?: [number, number, number];
@@ -209,7 +218,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }: BandProps) {
         </RigidBody>
       </group>
       <mesh ref={band}>
-        <meshLineGeometry />
+        {/* @ts-ignore */}
         <meshLineMaterial
           color="#00ff41"
           depthTest={true}

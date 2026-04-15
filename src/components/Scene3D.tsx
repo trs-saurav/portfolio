@@ -13,6 +13,7 @@ import {
 } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import * as THREE from 'three';
+// @ts-ignore
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib';
 
 // Initialize rect area light shaders
@@ -20,52 +21,6 @@ if (typeof window !== 'undefined') {
   RectAreaLightUniformsLib.init();
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Avatar & Laptop Component
-   Handles the sitting pose and the Matrix-style screen glow.
-───────────────────────────────────────────────────────────── */
-function DeveloperModel() {
-  // Models must be in the /public folder
-  const avatar = useGLTF('/avatar.glb'); 
-  const laptop = useGLTF('/Laptop.glb');
-  
-  const { animations } = avatar;
-  const { actions, names } = useAnimations(animations, avatar.scene);
-
-  // Activate the sitting pose immediately
-  useLayoutEffect(() => {
-    if (actions && names.length > 0) {
-      actions[names[0]].play().paused = true;
-    }
-  }, [actions, names]);
-
-  return (
-    <group position={[0, -1.8, 0]}> 
-      <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
-        {/* The Avatar */}
-        <primitive object={avatar.scene} scale={1.8} />
-
-        {/* The Laptop (Row 2, Column 1) */}
-        <primitive 
-          object={laptop.scene} 
-          scale={1.4} 
-          position={[0, 1.05, 0.45]} 
-          rotation={[0, Math.PI, 0]} 
-        />
-
-        {/* Matrix-style glow reflecting off the avatar's face */}
-        <rectAreaLight
-          width={2.5}
-          height={1.5}
-          intensity={35}
-          color={'#00ff41'}
-          position={[0, 1.2, 0.4]}
-          rotation={[0, Math.PI, 0]}
-        />
-      </Float>
-    </group>
-  );
-}
 
 /* ─────────────────────────────────────────────────────────────
    Camera Rig — driven by native scroll progress
@@ -89,7 +44,6 @@ function CameraRig() {
     const o = progress.current;
     let x = 0, y = 0, z = 10, rotX = 0, rotY = 0;
 
-    // Scroll path logic
     if (o < 0.2) {
       const p = o / 0.2;
       x = THREE.MathUtils.lerp(0, 4, p);
@@ -119,9 +73,8 @@ function CameraRig() {
       z = THREE.MathUtils.lerp(11, 10, p);
     }
 
-    // Safety check: Don't let NaN reach the camera
     if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z)) {
-       x = 0; y = 0; z = 10;
+      x = 0; y = 0; z = 10;
     }
 
     cameraRef.current.position.lerp(new THREE.Vector3(x, y, z), 0.04);
@@ -156,27 +109,38 @@ function ScrollBridge() {
 export default function Scene3D() {
   return (
     <Canvas
-      style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1, pointerEvents: 'none' }}
+      // FIX: Changed zIndex from -1 to 1 so the canvas renders above
+      // the page background but below the UI content (which uses z-20+).
+      // Also kept pointerEvents none so clicks pass through to the UI.
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: 1,
+        pointerEvents: 'none',
+      }}
       dpr={[1, 1.25]}
-      gl={{ 
+      gl={{
         antialias: false,
-        alpha: true,
-        powerPreference: 'high-performance'
+        alpha: true,           // keeps the canvas background transparent
+        powerPreference: 'high-performance',
+      }}
+      // FIX: Explicitly set a transparent clear colour so Three.js
+      // does not paint a solid black background over the page.
+      onCreated={({ gl }) => {
+        gl.setClearColor(0x000000, 0);
       }}
     >
       <CameraRig />
-      
+
       {/* Lights */}
       <ambientLight intensity={0.5} />
       <pointLight position={[8, 8, 4]} intensity={4} color="#8ff5ff" />
       <pointLight position={[-8, -8, -4]} intensity={3} color="#d674ff" />
-      
-      {/* 3D Content */}
-      <Suspense fallback={null}>
-        <DeveloperModel />
-        {/* Environment provides the realistic reflections on the laptop */}
-        <Environment preset="night" />
-      </Suspense>
+
+
 
       {/* Background Elements */}
       <Stars radius={180} depth={50} count={3500} factor={4} saturation={0} fade speed={0.5} />
@@ -194,7 +158,7 @@ export default function Scene3D() {
       <ScrollBridge />
 
       {/* Post-processing effects */}
-      <EffectComposer disableNormalPass={false}>
+      <EffectComposer>
         <Bloom luminanceThreshold={1} intensity={1} radius={0.3} />
         <Vignette darkness={0.8} offset={0.3} />
       </EffectComposer>

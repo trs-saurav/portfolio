@@ -97,7 +97,7 @@ export default function Contact() {
             style={{ display: 'flex', flexDirection: 'column' }}>
             {/* Terminal window */}
             <div style={{ background: 'linear-gradient(135deg,rgba(0,255,65,0.06),transparent)', padding: 1, marginBottom: '0.5rem', display: 'flex', flex: 1 }}>
-              <div style={{ background: 'var(--surface)', padding: '1.75rem 2rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+              <div style={{ background: 'rgba(13, 17, 23, 0.45)', backdropFilter: 'blur(12px)', padding: '1.75rem 2rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
                 {/* Title bar */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(70,72,77,0.45)', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
