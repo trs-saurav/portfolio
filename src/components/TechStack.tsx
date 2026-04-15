@@ -1,13 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import TargetCursor from './reactbits/TargetCursor';
+import { LetterGlitch } from './reactbits/LetterGlitch';
 
-const STACK: { category: string; color: string; items: { name: string; tag: string; icon: string }[] }[] = [
+const STACK = [
   {
     category: 'FRONTEND',
-    color: 'var(--primary-neon)',
+    color: '#00ff41',
     items: [
       { name: 'React',      tag: 'UI_KERNEL',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
       { name: 'Next.js',    tag: 'APP_ROUTER',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
@@ -18,12 +19,13 @@ const STACK: { category: string; color: string; items: { name: string; tag: stri
   },
   {
     category: 'BACKEND',
-    color: 'var(--secondary-neon)',
+    color: '#ffb86c',
     items: [
       { name: 'Node.js',    tag: 'RUNTIME',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
       { name: 'Python',     tag: 'SCRIPTING',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
       { name: 'FastAPI',    tag: 'API_LAYER',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg' },
       { name: 'Express',    tag: 'SERVER',       icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg' },
+      { name: 'Postman',    tag: 'API_TEST',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postman/postman-original.svg' },
     ],
   },
   {
@@ -34,6 +36,7 @@ const STACK: { category: string; color: string; items: { name: string; tag: stri
       { name: 'TensorFlow',  tag: 'ML_KERNEL',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg' },
       { name: 'Scikit-learn',tag: 'SKLEARN',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/scikitlearn/scikitlearn-original.svg' },
       { name: 'OpenCV',      tag: 'VISION',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/opencv/opencv-original.svg' },
+      { name: 'Keras',       tag: 'NEURAL_NET',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/keras/keras-original.svg' },
     ],
   },
   {
@@ -44,6 +47,7 @@ const STACK: { category: string; color: string; items: { name: string; tag: stri
       { name: 'PostgreSQL',  tag: 'RELATIONAL',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg' },
       { name: 'Redis',       tag: 'CACHE_STORE', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg' },
       { name: 'Firebase',    tag: 'REALTIME_DB', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-original.svg' },
+      { name: 'Inngest',     tag: 'EVENT_BUS',   icon: 'https://www.inngest.com/favicon.ico' },
     ],
   },
   {
@@ -54,42 +58,39 @@ const STACK: { category: string; color: string; items: { name: string; tag: stri
       { name: 'Git',         tag: 'VCS',         icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg' },
       { name: 'Linux',       tag: 'OS_KERNEL',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg' },
       { name: 'Figma',       tag: 'DESIGN_SYS',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg' },
+      { name: 'Vercel',      tag: 'DEPLOYMENT',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vercel/vercel-original.svg' },
     ],
   },
 ];
 
 export default function TechStack() {
+  const [activeRow, setActiveRow] = useState<number | null>(null);
+
   return (
     <section 
       id="techstack" 
       className="group" 
-      style={{ width: '100%', padding: '0 2rem', boxSizing: 'border-box', position: 'relative', cursor: 'none' }}
+      style={{ width: '100%', padding: '0 2rem', position: 'relative', cursor: 'none' }}
     >
       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <TargetCursor targetSelector=".cursor-target" />
       </div>
-      <style>{`
-        @media (max-width: 768px) {
-          .tech-row { grid-template-columns: 1fr !important; }
-          .techstack-head { font-size: 2.5rem !important; }
-        }
-      `}</style>
+      
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: false, amount: 0.1 }}
+        viewport={{ once: true }}
         style={{ width: '80vw', maxWidth: 1200, margin: '0 auto', paddingTop: '6rem', paddingBottom: '4rem' }}
       >
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          style={{ marginBottom: '3.5rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(0,255,65,0.35)' }}
+          className="mb-14 pl-5 border-l-2 border-[#00ff41]/40"
         >
-          <span className="hud-tag" style={{ display: 'block', marginBottom: '0.4rem' }}>CAPABILITY_MATRIX // SYSTEM_STACK</span>
-          <h2 className="kinetic-text" style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', color: 'var(--foreground)' }}>
-            TECH_ARSENAL
+          <span className="hud-tag block mb-2 opacity-50">CAPABILITY_MATRIX // SYSTEM_STACK</span>
+          <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter uppercase leading-none">
+            <LetterGlitch text="TECH_ARSENAL" interval={5000} />
           </h2>
         </motion.div>
 
@@ -98,23 +99,19 @@ export default function TechStack() {
           {STACK.map((cat, ci) => (
             <motion.div
               key={cat.category}
-              initial={{ opacity: 0, x: -16 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false, amount: 0.2 }}
-              transition={{ duration: 0.55, delay: ci * 0.08 }}
-              className="tech-row"
+              className="tech-row group/row"
+              onMouseEnter={() => setActiveRow(ci)}
+              onMouseLeave={() => setActiveRow(null)}
               style={{
                 background: 'rgba(255, 255, 255, 0.02)',
                 backdropFilter: 'blur(8px)',
                 display: 'grid',
-                gridTemplateColumns: '180px 1fr',
-                borderLeft: `2px solid ${cat.color}22`,
-                transition: 'border-color 0.25s',
+                gridTemplateColumns: 'minmax(180px, 200px) 1fr',
+                borderLeft: `2px solid ${activeRow === ci ? cat.color : `${cat.color}22`}`,
+                transition: 'border-color 0.3s ease',
               }}
-              onMouseEnter={e => (e.currentTarget.style.borderLeftColor = cat.color)}
-              onMouseLeave={e => (e.currentTarget.style.borderLeftColor = `${cat.color}22`)}
             >
-              {/* Left label */}
+              {/* Left label (Sidebar Fixed state logic) */}
               <div style={{
                 borderRight: '1px solid rgba(255,255,255,0.04)',
                 padding: '1.5rem 1.25rem',
@@ -122,56 +119,40 @@ export default function TechStack() {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 gap: '0.35rem',
-                background: 'var(--surface-container-high)',
+                background: activeRow === ci ? 'rgba(255,255,255,0.03)' : 'var(--surface-container-high)',
+                transition: 'background 0.3s ease'
               }}>
-                <span style={{ fontSize: '0.55rem', fontWeight: 700, color: cat.color, letterSpacing: '0.25em', textTransform: 'uppercase' }}>MODULE</span>
+                <span style={{ fontSize: '0.55rem', fontWeight: 700, color: cat.color, letterSpacing: '0.25em' }}>MODULE</span>
                 <span style={{ color: 'var(--foreground)', fontWeight: 900, fontSize: '0.9rem', letterSpacing: '0.06em' }}>{cat.category}</span>
               </div>
 
               {/* Right: tech cards */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1px', padding: '1px' }}>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-[1px]">
                 {cat.items.map((tech, ti) => (
                   <motion.div
-                    className="cursor-target"
+                    className="cursor-target relative p-5 flex items-center gap-3 overflow-hidden transition-colors"
                     key={tech.name}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: false }}
-                    transition={{ duration: 0.4, delay: ci * 0.06 + ti * 0.04 }}
-                    style={{
-                      background: 'rgba(13, 17, 23, 0.3)',
-                      backdropFilter: 'blur(4px)',
-                      padding: '1.25rem 1.5rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.85rem',
-                      flex: '1 1 160px',
-                      transition: 'background 0.2s, box-shadow 0.2s',
-                      cursor: 'default',
-                      position: 'relative',
-                      overflow: 'hidden',
-                    }}
-                    whileHover={{ backgroundColor: 'var(--surface-bright)' } as unknown as React.ComponentProps<typeof motion.div>['whileHover']}
+                    style={{ background: 'rgba(13, 17, 23, 0.3)' }}
+                    whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
                   >
+                    {/* Hover Corner Brackets (Fix #1: Transition handled via CSS group-hover) */}
+                    <div className="absolute top-0 right-0 w-3 h-[1px] bg-[#00ff41]/40 opacity-0 group-hover/target:opacity-100 transition-opacity" />
+                    <div className="absolute top-0 right-0 w-[1px] h-3 bg-[#00ff41]/40 opacity-0 group-hover/target:opacity-100 transition-opacity" />
+
                     <img
                       src={tech.icon}
                       alt={tech.name}
-                      width={28}
-                      height={28}
+                      width={24}
+                      height={24}
                       style={{
                         filter: tech.name === 'Next.js' || tech.name === 'Express' ? 'invert(1)' : 'none',
-                        opacity: 0.85,
-                        flexShrink: 0,
+                        opacity: 0.9,
                       }}
-                      onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                     />
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-                      <span style={{ color: 'var(--foreground)', fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.04em' }}>{tech.name}</span>
-                      <span style={{ color: cat.color, fontSize: '0.5rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', opacity: 0.7 }}>{tech.tag}</span>
+                    <div className="flex flex-col">
+                      <span className="text-white text-[0.8rem] font-bold tracking-wide">{tech.name}</span>
+                      <span style={{ color: cat.color, fontSize: '0.5rem', fontWeight: 700, letterSpacing: '0.15em' }}>{tech.tag}</span>
                     </div>
-                    {/* Top-right accent corner */}
-                    <div style={{ position: 'absolute', top: 0, right: 0, width: 12, height: 1, background: `${cat.color}40` }} />
-                    <div style={{ position: 'absolute', top: 0, right: 0, width: 1, height: 12, background: `${cat.color}40` }} />
                   </motion.div>
                 ))}
               </div>
@@ -181,16 +162,12 @@ export default function TechStack() {
 
         {/* Summary strip */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          style={{ marginTop: '1px', background: 'rgba(255, 255, 255, 0.04)', backdropFilter: 'blur(10px)', padding: '0.9rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+          className="mt-[1px] bg-white/[0.03] backdrop-blur-md p-4 flex justify-between items-center"
         >
-          <span className="hud-tag" style={{ opacity: 0.35 }}>
-            TOTAL_MODULES: {STACK.reduce((a, c) => a + c.items.length, 0)} {'//'} CATEGORIES: {STACK.length}
+          <span className="hud-tag text-[0.65rem] opacity-30 tracking-widest">
+            TOTAL_MODULES: {STACK.reduce((a, c) => a + c.items.length, 0)} // CATEGORIES: 5
           </span>
-          <span className="hud-tag" style={{ opacity: 0.35 }}>STACK_VERSION: 2026.Q2</span>
+          <span className="hud-tag text-[0.65rem] opacity-30 tracking-widest">STACK_VERSION: 2026.Q2</span>
         </motion.div>
       </motion.div>
     </section>

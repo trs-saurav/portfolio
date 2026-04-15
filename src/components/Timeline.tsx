@@ -1,97 +1,118 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { DecryptedText } from './reactbits/DecryptedText';
+import CountUp from './reactbits/CountUp';
 
 const EXP = [
   {
     id: '01',
     title: 'WEB_DEV // CREATIVE_DESIGN',
-    company: 'Hackhound',
+    company: 'HACKHOUND',
     type: 'TECH_CLUB',
-    date: '08/2024',
-    desc: 'Architecting high-fidelity UI clusters. Engineering design systems for technical club event portals. Translating raw brand identity into production-ready assets.'
+    date: '08/2024 — PRESENT',
+    desc: [
+      'Architecting high-fidelity UI clusters for event portals.',
+      'Engineering design systems for technical club event deployments.',
+      'Translating raw brand identity into production-ready assets.'
+    ],
+    tech: ['Next.js', 'Figma', 'React', 'Tailwind']
   },
   {
     id: '02',
     title: 'FREELANCE_DESIGNER',
-    company: 'Self-Employed',
+    company: 'SELF_EMPLOYED',
     type: 'FREELANCE',
-    date: '03/2020 – 12/2023',
-    desc: 'Visual asset deployment for energy sector high-stakes clients. Technical branding, brochure systems, and identity engineering.'
+    date: '03/2020 — 12/2023',
+    desc: [
+      'Visual asset deployment for energy sector high-stakes clients.',
+      'Technical branding and industrial brochure systems architecture.',
+      'Identity engineering and workflow automation via process design.'
+    ],
+    tech: ['Photoshop', 'Illustrator', 'Tally Prime', 'Workflow Design']
   }
 ];
 
 export default function Timeline() {
   return (
-    <section id="experience" className="section-full" style={{ alignItems: 'flex-start', padding: '0 2rem' }}>
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: false, amount: 0.2 }}
-        style={{ width: '80vw', maxWidth: 1200, margin: '0 auto', paddingTop: '6rem', paddingBottom: '4rem' }}
-      >
+    <section id="experience" className="w-full px-8 md:px-12 py-32 font-mono">
+      <div className="max-w-7xl mx-auto">
+        
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
-          style={{ marginBottom: '3.5rem', paddingLeft: '1.25rem', borderLeft: '2px solid rgba(255,184,108,0.35)' }}
+          className="mb-20 pl-8 border-l-4 border-[#ffb86c]/40"
         >
-          <span className="hud-tag" style={{ display: 'block', marginBottom: '0.5rem' }}>MISSION_CHRONOLOGY // EXP_LOG</span>
-          <h2 className="kinetic-text" style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)', color: 'var(--foreground)' }}>
+          <span className="text-[12px] tracking-[0.5em] text-[#ffb86c] uppercase mb-3 block">MISSION_CHRONOLOGY // EXP_LOG</span>
+          <h2 className="text-5xl md:text-8xl font-black text-white uppercase tracking-tighter">
             EXPERIENCE
           </h2>
         </motion.div>
 
-        {/* Entry list — left-wall layout, tonal separation */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+        {/* Entry list */}
+        <div className="flex flex-col gap-1.5 bg-white/[0.05]">
           {EXP.map((exp, i) => (
             <motion.div
               key={exp.id}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.6, delay: i * 0.12 }}
-              style={{
-                background: 'rgba(13, 17, 23, 0.45)',
-                backdropFilter: 'blur(12px)',
-                borderLeft: '2px solid rgba(0,255,65,0.2)',
-                display: 'grid',
-                gridTemplateColumns: '120px 1fr',
-                gap: 0,
-                transition: 'border-color 0.25s',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.borderLeftColor = 'rgba(0,255,65,0.7)')}
-              onMouseLeave={e => (e.currentTarget.style.borderLeftColor = 'rgba(0,255,65,0.2)')}
-              className="exp-entry"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="grid grid-cols-1 md:grid-cols-[160px_1fr] bg-[#0a0a0a] border-l-4 border-white/10 hover:border-[#00ff41] transition-colors duration-300 relative overflow-hidden group"
             >
+              {/* Ghost ID Decoration (Untouched as requested) */}
+              <span className="absolute -left-4 top-0 text-[12rem] font-black text-white/[0.03] select-none pointer-events-none">
+                {exp.id}
+              </span>
+
               {/* Left gutter — date + ID */}
-              <div style={{ background: 'var(--surface-container-high)', padding: '2rem 1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderRight: '1px solid rgba(255,255,255,0.04)' }}>
-                <span style={{ fontSize: '2rem', fontWeight: 900, color: 'rgba(0,255,65,0.12)', fontFamily: 'var(--font-space-grotesk)', lineHeight: 1 }}>{exp.id}</span>
-                <div>
-                  <span className="hud-tag" style={{ display: 'block', opacity: 0.45, marginBottom: '0.2rem' }}>DATE</span>
-                  <span style={{ color: 'var(--outline)', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.08em' }}>{exp.date}</span>
+              <div className="bg-white/[0.02] p-10 flex flex-col justify-between border-r border-white/5 relative z-10">
+                <span className="text-4xl font-black text-[#00ff41]/20 group-hover:text-[#00ff41] transition-colors leading-none">{exp.id}</span>
+                <div className="mt-12">
+                  <span className="text-[11px] text-white font-bold whitespace-nowrap tracking-wider">
+                    <span className="text-[#00ff41] mr-2 opacity-50">//</span>{exp.date}
+                  </span>
                 </div>
               </div>
 
               {/* Right content */}
-              <div style={{ padding: '2rem 2.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <div className="p-10 md:p-16 relative z-10">
+                <div className="flex flex-col md:flex-row justify-between items-start mb-10 gap-6">
                   <div>
-                    <span className="hud-tag" style={{ display: 'block', marginBottom: '0.4rem', opacity: 0.5 }}>POSITION</span>
-                    <h3 style={{ color: 'var(--foreground)', fontSize: 'clamp(1rem,2vw,1.3rem)', fontWeight: 800, margin: 0, letterSpacing: '0.04em' }}>{exp.title}</h3>
+                    <span className="text-[10px] text-[#00ff41] tracking-[0.4em] uppercase block mb-3 opacity-70">Position_UID</span>
+                    <h3 className="text-2xl md:text-[26px] font-black text-white tracking-tight uppercase leading-none">
+                      <DecryptedText text={exp.title} speed={40} maxIterations={10} />
+                    </h3>
                   </div>
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    <span style={{ padding: '3px 10px', background: 'rgba(0,255,65,0.06)', border: '1px solid rgba(0,255,65,0.15)', color: 'var(--primary-neon)', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.15em' }}>{exp.type}</span>
-                  </div>
+                  <span className="px-4 py-1.5 bg-[#00ff41]/5 border border-[#00ff41]/20 text-[#00ff41] text-[10px] font-black tracking-widest uppercase">
+                    {exp.type}
+                  </span>
                 </div>
 
-                <div style={{ marginBottom: '1.25rem' }}>
-                  <span className="hud-tag" style={{ opacity: 0.45, marginRight: '0.5rem' }}>ORGANISATION</span>
-                  <span style={{ color: 'var(--primary-neon)', fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.06em' }}>{exp.company}</span>
+                <div className="mb-10">
+                  <span className="text-[10px] text-[#849495] tracking-[0.3em] uppercase block mb-2">Organisation</span>
+                  <span className="text-[#00ff41] text-lg font-black tracking-widest uppercase">{exp.company}</span>
                 </div>
 
-                <p style={{ color: 'var(--on-surface-var)', fontSize: '0.95rem', lineHeight: 1.75, margin: 0 }}>{exp.desc}</p>
+                {/* Description (Increased to 14px) */}
+                <div className="space-y-3 mb-12">
+                   {exp.desc.map((line, idx) => (
+                     <p key={idx} className="text-[#b9caca] text-[15px] leading-relaxed">
+                        <span className="text-[#00ff41] mr-4 opacity-60">//</span> {line}
+                     </p>
+                   ))}
+                </div>
+
+                {/* Tech Stack Tags (Increased to 12px + Spacing) */}
+                <div className="flex flex-wrap gap-x-10 gap-y-4 pt-8 border-t border-white/10">
+                    {exp.tech.map(t => (
+                        <span key={t} className="text-[13px] text-[#849495] hover:text-[#00ff41] transition-colors cursor-default tracking-[0.2em] font-bold uppercase">
+                            #{t}
+                        </span>
+                    ))}
+                </div>
               </div>
             </motion.div>
           ))}
@@ -99,29 +120,21 @@ export default function Timeline() {
 
         {/* Footer callout */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          style={{ marginTop: '1px', background: 'rgba(255, 255, 255, 0.04)', backdropFilter: 'blur(10px)', padding: '1.5rem 2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          className="mt-1 bg-white/[0.04] p-10 flex justify-between items-center border-t border-white/5"
         >
-          <span className="hud-tag" style={{ opacity: 0.35 }}>EXP_LOG_COMPILED // ENTRIES: {EXP.length}</span>
+          <div className="text-[12px] text-white/30 tracking-[0.3em] uppercase">
+            EXP_LOG_COMPILED // ENTRIES: <span className="text-[#00ff41] font-bold"><CountUp from={0} to={EXP.length} duration={2} /></span>
+          </div>
           <a
             href="#projects"
-            style={{ color: 'var(--foreground)', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'color 0.2s' }}
-            onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary-neon)')}
-            onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.color = 'var(--foreground)')}
+            className="text-white text-[12px] font-black tracking-[0.3em] uppercase hover:text-[#00ff41] transition-all flex items-center gap-4 group"
           >
-            VIEW_PROJECTS →
+            INITIALIZE_PROJECT_VIEW <span className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
           </a>
         </motion.div>
-      </motion.div>
-
-      <style>{`
-        @media (max-width: 640px) {
-          .exp-entry { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
+      </div>
     </section>
   );
 }

@@ -4,8 +4,8 @@ import { Suspense, useState, useEffect } from 'react';
 import Scene3D from '@/components/Scene3D';
 import Navigation from '@/components/Navigation';
 import WelcomeLoader from '@/components/WelcomeLoader';
-import GamerHUD from '@/components/GamerHUD';
 import { TerminalBackground } from '@/components/reactbits/TerminalBackground';
+import { PixelTrail } from '@/components/reactbits/PixelTrail';
 
 import Hero from '@/components/Hero';
 import About from '@/components/About';
@@ -29,6 +29,9 @@ export default function Home() {
 
   return (
     <>
+      {/* Sitewide pixel trail cursor effect */}
+      <PixelTrail color="#00ff41" size={8} />
+
       {/* Fixed 3D canvas background (disabled or kept along with terminal) */}
       <Suspense fallback={null}>
         <Scene3D />
@@ -42,7 +45,7 @@ export default function Home() {
 
       {/* Fixed overlays */}
       <Navigation />
-      {!loading && <GamerHUD />}
+
 
       {/* Native scroll content - Only render after loading so animations sync perfectly */}
       {!loading && (
