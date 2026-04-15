@@ -219,6 +219,8 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }: BandProps) {
       </group>
       <mesh ref={band}>
         {/* @ts-ignore */}
+        <meshLineGeometry />
+        {/* @ts-ignore */}
         <meshLineMaterial
           color="#00ff41"
           depthTest={true}

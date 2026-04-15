@@ -91,13 +91,14 @@ export default function WelcomeLoader({ onCompleteAction }: { onCompleteAction: 
              <AnimatePresence>
                 {isReady && (
                    <motion.button
+                      type="button"
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       className="btn-primary"
                       onClick={handleEnter}
                       style={{ marginTop: '1rem' }}
                    >
-                      INITIATE INTERFACE ↗
+                      INITIATE INTERFACE →
                    </motion.button>
                 )}
              </AnimatePresence>

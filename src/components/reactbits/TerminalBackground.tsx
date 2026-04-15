@@ -17,7 +17,7 @@ export const TerminalBackground = ({ color = '#00ff41', speed = 50 }: { color?: 
     let h = canvas.height = window.innerHeight;
 
     // Characters to use in the matrix rain effect
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+{}|:"<>?-=[]\',./'.split('');
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+{}|:\"<>?-=[]',./".split('');
     
     const fontSize = 14;
     const columns = Math.ceil(w / fontSize);
