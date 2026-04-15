@@ -128,7 +128,7 @@ export default function Hero() {
 
       <section
         id="home"
-        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-6 pt-20 pb-24 bg-transparent"
+        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 pt-12 sm:pt-16 md:pt-20 pb-20 sm:pb-24 bg-transparent"
       >
         <div className="local-scanline"></div>
         <div className="hero-glow absolute inset-0"></div>
@@ -190,7 +190,7 @@ export default function Hero() {
             </div>
 
             {/* ── CENTRAL AVATAR HUB ── */}
-            <div className="relative w-72 h-72 sm:w-80 sm:h-80 md:w-[500px] md:h-[500px] flex items-center justify-center">
+            <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-[400px] md:h-[400px] lg:w-[500px] lg:h-[500px] flex items-center justify-center">
               <div className="absolute inset-0 border border-[#00ff41]/10 rounded-full animate-[spin_40s_linear_infinite]"></div>
               <div className="absolute inset-6 border border-[#e9ffe9]/5 rounded-full animate-[spin_30s_linear_infinite_reverse]"></div>
               
@@ -211,21 +211,21 @@ export default function Hero() {
             </div>
             
             {/* ── IDENTITY & CTA ── */}
-            <div className="text-center mt-8 space-y-6 z-30">
-              <div className="space-y-3">
-                <h2 className="text-4xl sm:text-5xl md:text-6xl font-light tracking-[0.2em] uppercase text-[#e9ffe9] drop-shadow-[0_0_15px_rgba(233,255,233,0.1)]">
+            <div className="text-center mt-6 sm:mt-8 space-y-4 sm:space-y-6 z-30">
+              <div className="space-y-2 sm:space-y-3">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-[0.2em] uppercase text-[#e9ffe9] drop-shadow-[0_0_15px_rgba(233,255,233,0.1)]">
                   <SplitText text="Saurav Kumar" delay={0.3} duration={0.08} />
                 </h2>
-                <p className="text-[10px] md:text-xs text-[#00ff41]/50 tracking-[0.6em] uppercase font-mono">
+                <p className="text-[9px] sm:text-[10px] md:text-xs text-[#00ff41]/50 tracking-[0.6em] uppercase font-mono">
                   <DecryptedText text="Full_Stack // Systems_Designer" maxIterations={12} speed={50} />
                 </p>
               </div>
 
-              <motion.div variants={ITEM} custom={0.6} className="pt-6">
+              <motion.div variants={ITEM} custom={0.6} className="pt-4 sm:pt-6">
                 <StarBorder color="#00ff41">
                   <button 
                     onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="group relative px-10 py-3.5 bg-[#00ff41] text-[#050505] font-mono text-[11px] font-bold tracking-[0.4em] uppercase hover:bg-[#e9ffe9] transition-all duration-300 shadow-[0_0_25px_rgba(0,255,65,0.2)] active:scale-95"
+                    className="group relative px-6 sm:px-10 py-2.5 sm:py-3.5 bg-[#00ff41] text-[#050505] font-mono text-[9px] sm:text-[11px] font-bold tracking-[0.4em] uppercase hover:bg-[#e9ffe9] transition-all duration-300 shadow-[0_0_25px_rgba(0,255,65,0.2)] active:scale-95"
                   >
                     <span className="relative z-10">View_Manifest_</span>
                   </button>

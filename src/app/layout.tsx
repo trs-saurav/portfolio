@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Orbitron, Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import { PropsWithChildren } from 'react';
 
 const orbitron = Orbitron({
   subsets: ['latin'],
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
   description: 'Personal portfolio of Saurav Kumar, Software Engineer and AI Enthusiast.',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en" className={`${orbitron.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
       <body>{children}</body>

@@ -13,7 +13,7 @@ const PROJECTS = [
     sub: 'HEALTHTECH_SAAS',
     status: 'ACTIVE_DEPLOYMENT',
     date: '12/2025 – PRESENT',
-    desc: 'Architected a multi-tenant platform using Next.js 15 and Inngest for event-driven workflows[cite: 5, 25]. Features strict subdomain isolation and real-time Firebase communication[cite: 25, 27].',
+    desc: 'Architected a multi-tenant platform using Next.js 15 and Inngest for event-driven workflows. Features strict subdomain isolation and real-time Firebase communication.',
     tech: ['Next.js 15', 'Inngest', 'NextAuth', 'Firebase'],
     src: 'https://github.com/trs-saurav',
     live: '#'
@@ -35,7 +35,7 @@ const PROJECTS = [
     sub: 'B2C_COMMERCE_ENGINE',
     status: 'SYSTEM_STABLE',
     date: '08/2025 – 10/2025',
-    desc: 'High-performance commerce engine leveraging SSR for SEO[cite: 29, 31]. Integrated Clerk RBAC to secure administrative inventory dashboards[cite: 33].',
+    desc: 'High-performance commerce engine leveraging SSR for SEO. Integrated Clerk RBAC to secure administrative inventory dashboards.',
     tech: ['Next.js', 'Clerk', 'MongoDB', 'Tailwind'],
     src: 'https://github.com/trs-saurav',
     live: '#'
@@ -122,32 +122,32 @@ export default function ProjectsAndStats() {
               <div className="relative z-10">
                 <div className="flex justify-between items-start mb-6 border-b border-white/10 pb-4">
                   <div>
-                    <span className="font-mono text-[9px] tracking-[0.3em] text-[#849495] uppercase">UID // {proj.id} [cite: 2, 25]</span>
-                    <h3 className="text-2xl font-bold text-white tracking-tight uppercase leading-none mt-1">{proj.name} [cite: 23, 29]</h3>
-                    <p className="font-mono text-[10px] text-[#00ff41]/70 tracking-widest uppercase mt-1">{proj.sub} [cite: 23, 29]</p>
+                    <span className="font-mono text-[9px] tracking-[0.3em] text-[#849495] uppercase">UID // {proj.id} </span>
+                    <h3 className="text-2xl font-bold text-white tracking-tight uppercase leading-none mt-1">{proj.name} </h3>
+                    <p className="font-mono text-[10px] text-[#00ff41]/70 tracking-widest uppercase mt-1">{proj.sub} </p>
                   </div>
                   <div className="text-right">
                      <span className="inline-block px-2 py-1 bg-[#00ff41]/10 border border-[#00ff41]/30 text-[#00ff41] font-mono text-[8px] uppercase font-bold mb-2">
-                       {proj.status} [cite: 28]
+                       {proj.status} 
                      </span>
-                     <p className="font-mono text-[8px] text-[#849495] uppercase">{proj.date} [cite: 24, 30]</p>
+                     <p className="font-mono text-[8px] text-[#849495] uppercase">{proj.date} </p>
                   </div>
                 </div>
 
                 <p className="font-mono text-[#b9caca] text-[13px] leading-relaxed mb-8 opacity-90">
                   <span className="text-[#00ff41] mr-2 font-bold">//_DESC:</span>
-                  {proj.desc} [cite: 25, 26, 31, 32]
+                  {proj.desc} 
                 </p>
 
                 <div className="flex flex-wrap gap-x-6 gap-y-2 border-t border-white/10 pt-6 mb-8">
                   {proj.tech.map(t => (
-                    <span key={t} className="font-mono text-[9px] text-[#849495] uppercase tracking-widest hover:text-[#00ff41] transition-colors cursor-default">#{t} [cite: 17, 19, 29]</span>
+                    <span key={t} className="font-mono text-[9px] text-[#849495] uppercase tracking-widest hover:text-[#00ff41] transition-colors cursor-default">#{t} </span>
                   ))}
                 </div>
 
                 <div className="flex items-center justify-between">
                   <a href={proj.src} target="_blank" rel="noopener noreferrer" className="font-mono text-[10px] tracking-[0.2em] text-[#849495] hover:text-white transition-colors underline decoration-[#00ff41]/30 underline-offset-4 uppercase">
-                    [ ACCESS_SOURCE ] [cite: 2]
+                    [ ACCESS_SOURCE ] 
                   </a>
                   <a href={proj.live} className="relative px-6 py-2 bg-[#00ff41] text-[#050505] font-mono text-[10px] font-black tracking-[0.2em] uppercase transition-all hover:bg-white hover:shadow-[0_0_25px_rgba(0,255,65,0.5)] active:scale-95">
                     INIT_DEPLOYMENT ↗
@@ -177,7 +177,7 @@ export default function ProjectsAndStats() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {LIVE_STATS.map((s) => (
             <div key={s.label} className="bg-[#0d1117] border-t-2 p-6 relative overflow-hidden group border-white/10" style={{ borderTopColor: s.color }}>
-              <span className="font-mono text-[9px] text-[#849495] tracking-widest uppercase block mb-4">{s.label} [cite: 2, 45]</span>
+              <span className="font-mono text-[9px] text-[#849495] tracking-widest uppercase block mb-4">{s.label} </span>
               <p className="text-4xl md:text-5xl font-black tracking-tighter" style={{ color: s.color }}>
                 {stats[s.key as keyof typeof stats]}
               </p>
@@ -188,7 +188,7 @@ export default function ProjectsAndStats() {
         {/* Activity Heatmap - Visibility Fixed */}
         <div className="bg-[#0d1117] border border-white/10 overflow-hidden">
           <div className="flex justify-between items-center p-4 border-b border-white/10 bg-white/[0.02]">
-            <span className="font-mono text-[9px] tracking-widest text-[#849495]">ACTIVE_STREAK_ANALYSIS // SOURCE: {heatSrc.toUpperCase()} [cite: 44]</span>
+            <span className="font-mono text-[9px] tracking-widest text-[#849495]">ACTIVE_STREAK_ANALYSIS // SOURCE: {heatSrc.toUpperCase()} </span>
             <button 
               onClick={() => setHeatSrc(heatSrc === 'github' ? 'leetcode' : 'github')}
               className="bg-[#00ff41] text-[#0a0a0a] font-mono text-[9px] font-black px-4 py-1 uppercase hover:bg-white transition-colors"

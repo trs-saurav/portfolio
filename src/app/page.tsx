@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import Scene3D from '@/components/Scene3D';
 import Navigation from '@/components/Navigation';
 import WelcomeLoader from '@/components/WelcomeLoader';
@@ -49,7 +50,10 @@ export default function Home() {
 
       {/* Native scroll content - Only render after loading so animations sync perfectly */}
       {!loading && (
-        <main
+        <motion.main
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
           style={{
             position: 'relative',
             zIndex: 1,
@@ -64,7 +68,7 @@ export default function Home() {
           <Creative />
           <Contact />
           <Footer />
-        </main>
+        </motion.main>
       )}
     </>
   );

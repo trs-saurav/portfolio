@@ -5,11 +5,24 @@ import { useState, useRef } from 'react';
 import { DecryptedText } from './reactbits/DecryptedText';
 import { SpotlightCard } from './reactbits/SpotlightCard';
 import { InfiniteScroll } from './reactbits/InfiniteScroll';
+import { Magnet } from './reactbits/Magnet';
+import { NoisyCard } from './reactbits/NoisyCard';
+import { LetterGlitch } from './reactbits/LetterGlitch';
 
 /* ── fade-up variant (mirrors other sections) ── */
 const fadeUp = {
   hidden: { opacity: 0, y: 15 },
   visible: (d = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.6, ease: easeOut, delay: d } }),
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: (d = 0) => ({ opacity: 1, scale: 1, transition: { duration: 0.5, ease: easeOut, delay: d } }),
+};
+
+const slideInLeft = {
+  hidden: { opacity: 0, x: -30 },
+  visible: (d = 0) => ({ opacity: 1, x: 0, transition: { duration: 0.6, ease: easeOut, delay: d } }),
 };
 
 /* ── KINETIC SEQUENCE (scrolling strip) ── */
@@ -55,62 +68,71 @@ function PhotoFrame({ frame, delay }: { frame: typeof PHOTO_FRAMES[0]; delay: nu
   };
 
   return (
-    <motion.div
-      variants={fadeUp}
-      custom={delay}
-      ref={ref}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => { setHovered(false); setMouse({ x: 0, y: 0 }); }}
-      onMouseMove={handleMouseMove}
-      className="relative w-full overflow-hidden border border-white/5 bg-[#0d1117] group cursor-crosshair"
-      style={{ aspectRatio: '4/3' }}
-    >
-      {/* Spotlight glow */}
-      {hovered && (
-        <div
-          className="absolute inset-0 pointer-events-none z-20 transition-opacity duration-300"
-          style={{
-            background: `radial-gradient(circle 140px at ${mouse.x}px ${mouse.y}px, rgba(0,255,65,0.12), transparent 80%)`,
-          }}
-        />
-      )}
+    <Magnet magnetStrength={0.15}>
+      <motion.div
+        variants={fadeUp}
+        custom={delay}
+        ref={ref}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => { setHovered(false); setMouse({ x: 0, y: 0 }); }}
+        onMouseMove={handleMouseMove}
+        className="relative w-full overflow-hidden border border-white/5 bg-[#0d1117] group cursor-crosshair hover:border-[#00ff41]/30 transition-colors duration-300 hover:shadow-[0_0_20px_rgba(0,255,65,0.1)]"
+        style={{ aspectRatio: '4/3' }}
+        whileHover={{ scale: 1.02 }}
+      >
+        <NoisyCard>
+          <div className="w-full h-full relative">
+            {/* Spotlight glow */}
+            {hovered && (
+              <motion.div
+                className="absolute inset-0 pointer-events-none z-20 transition-opacity duration-300"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                style={{
+                  background: `radial-gradient(circle 140px at ${mouse.x}px ${mouse.y}px, rgba(0,255,65,0.12), transparent 80%)`,
+                }}
+              />
+            )}
 
-      {/* Image — grayscale→color on hover */}
-      <img
-        src={frame.img}
-        alt={frame.tag}
-        draggable={false}
-        onContextMenu={(e) => e.preventDefault()}
-        className="w-full h-full object-cover transition-all duration-700 ease-in-out grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100"
-      />
+            {/* Image — grayscale→color on hover */}
+            <img
+              src={frame.img}
+              alt={frame.tag}
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
+              className="w-full h-full object-cover transition-all duration-700 ease-in-out grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100"
+            />
 
-      {/* Scan-line overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none z-10 opacity-20"
-        style={{
-          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px)',
-        }}
-      />
+            {/* Scan-line overlay */}
+            <div
+              className="absolute inset-0 pointer-events-none z-10 opacity-20"
+              style={{
+                backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px)',
+              }}
+            />
 
-      {/* Corner brackets */}
-      <div className="absolute top-2 left-2 w-4 h-4 border-t border-l border-white/20 z-30 group-hover:border-[#00ff41]/50 transition-colors duration-500" />
-      <div className="absolute top-2 right-2 w-4 h-4 border-t border-r border-white/20 z-30 group-hover:border-[#00ff41]/50 transition-colors duration-500" />
-      <div className="absolute bottom-8 left-2 w-4 h-4 border-b border-l border-white/20 z-30 group-hover:border-[#00ff41]/50 transition-colors duration-500" />
-      <div className="absolute bottom-8 right-2 w-4 h-4 border-b border-r border-white/20 z-30 group-hover:border-[#00ff41]/50 transition-colors duration-500" />
+            {/* Corner brackets with animations */}
+            <motion.div className="absolute top-2 left-2 w-4 h-4 border-t border-l border-white/20 z-30 group-hover:border-[#00ff41]/50 transition-colors duration-500" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: delay + 0.1 }} />
+            <motion.div className="absolute top-2 right-2 w-4 h-4 border-t border-r border-white/20 z-30 group-hover:border-[#00ff41]/50 transition-colors duration-500" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: delay + 0.15 }} />
+            <motion.div className="absolute bottom-8 left-2 w-4 h-4 border-b border-l border-white/20 z-30 group-hover:border-[#00ff41]/50 transition-colors duration-500" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: delay + 0.2 }} />
+            <motion.div className="absolute bottom-8 right-2 w-4 h-4 border-b border-r border-white/20 z-30 group-hover:border-[#00ff41]/50 transition-colors duration-500" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: delay + 0.25 }} />
 
-      {/* Hover green border */}
-      <div className="absolute inset-0 border border-transparent group-hover:border-[#00ff41]/30 transition-colors duration-500 z-30 pointer-events-none" />
+            {/* Hover green border */}
+            <div className="absolute inset-0 border border-transparent group-hover:border-[#00ff41]/30 transition-colors duration-500 z-30 pointer-events-none" />
 
-      {/* Bottom meta bar */}
-      <div className="absolute bottom-0 left-0 right-0 z-30 flex items-center justify-between px-2 py-1.5 bg-black/70 border-t border-white/5">
-        <span className="font-mono text-[7px] tracking-[0.3em] text-white/70 uppercase group-hover:text-[#00ff41] transition-colors duration-300">
-          {frame.tag}
-        </span>
-        <span className="font-mono text-[7px] tracking-[0.2em] text-white/20 uppercase">
-          {frame.cat}
-        </span>
-      </div>
-    </motion.div>
+            {/* Bottom meta bar with animations */}
+            <motion.div className="absolute bottom-0 left-0 right-0 z-30 flex items-center justify-between px-2 py-1.5 bg-black/70 border-t border-white/5" initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: delay + 0.1 }}>
+              <motion.span className="font-mono text-[7px] tracking-[0.3em] text-white/70 uppercase group-hover:text-[#00ff41] transition-colors duration-300" whileHover={{ letterSpacing: "0.4em" }}>
+                {frame.tag}
+              </motion.span>
+              <motion.span className="font-mono text-[7px] tracking-[0.2em] text-white/20 uppercase" animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 3, repeat: Infinity }}>
+                {frame.cat}
+              </motion.span>
+            </motion.div>
+          </div>
+        </NoisyCard>
+      </motion.div>
+    </Magnet>
   );
 }
 
@@ -125,53 +147,49 @@ export default function Creative() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.1 }}
-        className="w-full px-8 md:px-12 py-12 border-b border-white/10 bg-[#050505]/90 backdrop-blur-md"
+        className="w-full px-4 sm:px-6 md:px-8 lg:px-12 py-10 sm:py-12 border-b border-white/10 bg-[#050505]/90 backdrop-blur-md"
       >
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <motion.div variants={fadeUp} custom={0} className="pl-4 border-l-2 border-[#00ff41]/30 space-y-2">
-            <span className="font-mono text-[9px] tracking-[0.5em] text-[#00ff41] uppercase block leading-none">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
+          <motion.div variants={fadeUp} custom={0} className="pl-3 sm:pl-4 border-l-2 border-[#00ff41]/30 space-y-1 sm:space-y-2">
+            <span className="font-mono text-[8px] sm:text-[9px] tracking-[0.5em] text-[#00ff41] uppercase block leading-none">
               VISUAL_ARCHIVE // FORGE_v4.2
             </span>
-            <h2 className="text-4xl md:text-7xl font-black tracking-tighter text-white uppercase leading-none">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black tracking-tighter text-white uppercase leading-none">
               <DecryptedText text="CREATIVE_FORGE" maxIterations={12} speed={40} />
             </h2>
           </motion.div>
 
           {/* Status badges */}
-          <motion.div variants={fadeUp} custom={0.1} className="flex flex-wrap gap-3 items-center self-start md:self-auto">
-            <span className="bg-[#ff3131]/10 border border-[#ff3131]/30 px-2 py-1 font-mono text-[8px] text-[#ff3131] uppercase animate-pulse">
+          <motion.div variants={fadeUp} custom={0.1} className="flex flex-wrap gap-2 sm:gap-3 items-start md:items-center self-start md:self-auto">
+            <motion.span className="bg-[#ff3131]/10 border border-[#ff3131]/30 px-2 py-1 font-mono text-[7px] sm:text-[8px] text-[#ff3131] uppercase animate-pulse" whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 49, 49, 0.2)" }}>
               INTERACTION_LOCK: ACTIVE
-            </span>
-            <span className="bg-[#ffb86c]/5 border border-[#ffb86c]/20 px-2 py-1 font-mono text-[8px] text-[#ffb86c] uppercase">
+            </motion.span>
+            <motion.span className="bg-[#ffb86c]/5 border border-[#ffb86c]/20 px-2 py-1 font-mono text-[7px] sm:text-[8px] text-[#ffb86c] uppercase" whileHover={{ scale: 1.05, borderColor: "#ffb86c" }}>
               FRAMES: {PHOTO_FRAMES.length} ARCHIVED
-            </span>
-          </motion.div>
-        </div>
-      </motion.div>
+            </motion.span>
+          </motion.div>        </div>      </motion.div>
 
       {/* ── Main content ── */}
       <motion.div
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.05 }}
-        className="max-w-7xl mx-auto px-8 md:px-12 py-16"
+        className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-12 sm:py-16"
       >
 
         {/* ════ MODULE 01: KINETIC SEQUENCE ════ */}
-        <motion.div variants={fadeUp} custom={0} className="mb-24">
+        <motion.div variants={fadeUp} custom={0} className="mb-16 sm:mb-20 lg:mb-24">
           {/* Module label */}
-          <div className="flex items-center gap-4 mb-10 pl-4 border-l-2 border-[#00ff41]/30">
-            <span className="font-mono text-[9px] text-[#00ff41] uppercase tracking-widest">
+          <div className="flex items-center gap-3 sm:gap-4 mb-8 sm:mb-10 pl-3 sm:pl-4 border-l-2 border-[#00ff41]/30">
+            <span className="font-mono text-[8px] sm:text-[9px] text-[#00ff41] uppercase tracking-widest">
               Module: Kinetic_Sequence
             </span>
             <div className="h-[1px] flex-1 bg-white/5" />
-            <span className="font-mono text-[7px] text-white/20 uppercase tracking-widest">
-              {KINETIC_NODES.length} FEEDS
-            </span>
-          </div>
+            <span className="font-mono text-[6px] sm:text-[7px] text-white/20 uppercase tracking-widest\">
+              {KINETIC_NODES.length} FEEDS           </span>      </div>
 
           {/* Scrolling strip */}
-          <div className="relative w-full overflow-hidden py-3 group">
+          <div className="relative w-full overflow-hidden py-2 sm:py-3 group">
             <InfiniteScroll
               items={KINETIC_NODES}
               speed="slow"
@@ -182,8 +200,8 @@ export default function Creative() {
                   key={item.id}
                   whileHover={{ scale: 1.02, y: -2 }}
                   transition={{ duration: 0.3 }}
-                  className="relative mx-4 overflow-hidden border border-white/10 bg-[#0a0a0a] group/card cursor-crosshair"
-                  style={{ width: 'clamp(280px, 40vw, 480px)', aspectRatio: '16/9' }}
+                  className="relative mx-1 sm:mx-2 md:mx-3 lg:mx-4 overflow-hidden border border-white/10 bg-[#0a0a0a] group/card cursor-crosshair"
+                  style={{ width: 'clamp(140px, 45vw, 380px)', aspectRatio: '16/9' }}
                 >
                   <img
                     src={item.img}
@@ -230,30 +248,30 @@ export default function Creative() {
         {/* ════ MODULE 02: PHOTOGRAPHY ARCHIVE (4:3 Masonry) ════ */}
         <motion.div variants={fadeUp} custom={0.1} className="pb-8">
           {/* Module label */}
-          <div className="flex items-center gap-4 mb-10 pl-4 border-l-2 border-[#ffb86c]/30">
-            <span className="font-mono text-[9px] text-[#ffb86c] uppercase tracking-widest">
+          <div className="flex items-center gap-3 sm:gap-4 mb-8 sm:mb-10 pl-3 sm:pl-4 border-l-2 border-[#ffb86c]/30">
+            <span className="font-mono text-[8px] sm:text-[9px] text-[#ffb86c] uppercase tracking-widest">
               Module: Photography_Archive
             </span>
             <div className="h-[1px] flex-1 bg-white/5" />
-            <span className="font-mono text-[7px] text-[#ffb86c]/50 uppercase tracking-widest">
+            <span className="font-mono text-[6px] sm:text-[7px] text-[#ffb86c]/50 uppercase tracking-widest">
               {PHOTO_FRAMES.length} CAPTURES // 4:3
             </span>
           </div>
 
           {/* Stats row */}
-          <div className="flex flex-wrap gap-4 mb-8">
+          <motion.div className="flex flex-wrap gap-2 sm:gap-4 mb-6 sm:mb-8" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.1, staggerChildren: 0.1 }}>
             {['LANDSCAPE', 'URBAN', 'COSMOS', 'NATURE'].map((cat, i) => (
-              <div key={cat} className="flex items-center gap-2 bg-white/[0.03] border border-white/5 px-3 py-1.5">
-                <div className="w-1.5 h-1.5" style={{ background: i === 0 ? '#00ff41' : i === 1 ? '#ffb86c' : i === 2 ? '#ff3131' : 'rgba(255,255,255,0.3)' }} />
-                <span className="font-mono text-[8px] text-white/40 tracking-widest uppercase">{cat}</span>
-              </div>
+              <motion.div key={cat} className="flex items-center gap-1.5 sm:gap-2 bg-white/[0.03] border border-white/5 px-2 sm:px-3 py-1 sm:py-1.5 hover:border-[#00ff41]/30 transition-colors" initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 + i * 0.1 }} whileHover={{ scale: 1.05 }}>
+                <motion.div className="w-1 h-1 sm:w-1.5 sm:h-1.5" style={{ background: i === 0 ? '#00ff41' : i === 1 ? '#ffb86c' : i === 2 ? '#ff3131' : 'rgba(255,255,255,0.3)' }} animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }} />
+                <span className="font-mono text-[7px] sm:text-[8px] text-white/40 tracking-widest uppercase">{cat}</span>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
-          {/* ── 4-column masonry grid: CSS columns approach ── */}
-          <div className="columns-1 sm:columns-2 lg:columns-4 gap-3">
+          {/* ── Responsive grid layout (optimized for mobile) ── */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
             {PHOTO_FRAMES.map((frame, i) => (
-              <div key={frame.id} className="break-inside-avoid mb-3">
+              <div key={frame.id} className="w-full">
                 <PhotoFrame frame={frame} delay={i * 0.03} />
               </div>
             ))}
@@ -263,23 +281,23 @@ export default function Creative() {
       </motion.div>
 
       {/* ── Persistent System Footer (mirrors other section footers) ── */}
-      <div className="w-full border-t border-white/10 bg-[#0a0a0a] px-8 md:px-12 py-5 flex items-center justify-between">
-        <div className="flex gap-6 font-mono text-[8px] text-white/20 uppercase tracking-[0.3em]">
-          <span>Archive_v4.2.0</span>
-          <span className="text-[#00ff41]">Telemetry: Active</span>
+      <motion.div className="w-full border-t border-white/10 bg-[#0a0a0a] px-4 sm:px-8 md:px-12 py-4 sm:py-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-0 hover:border-[#00ff41]/30 transition-colors duration-300" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+        <motion.div className="flex flex-col sm:flex-row gap-3 sm:gap-6 font-mono text-[7px] sm:text-[8px] text-white/20 uppercase tracking-[0.3em]" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.35 }}>
+          <motion.span animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 3, repeat: Infinity }}>Archive_v4.2.0</motion.span>
+          <motion.span className="text-[#00ff41]" animate={{ textShadow: ["0 0 0px rgba(0, 255, 65, 0)", "0 0 10px rgba(0, 255, 65, 0.5)", "0 0 0px rgba(0, 255, 65, 0)"] }} transition={{ duration: 2, repeat: Infinity }}>Telemetry: Active</motion.span>
           <span className="hidden md:inline">Seq: {KINETIC_NODES.length} │ Frames: {PHOTO_FRAMES.length}</span>
-        </div>
-        <div className="flex gap-4 items-center">
+        </motion.div>
+        <motion.div className="flex flex-col sm:flex-row gap-4 sm:items-center w-full sm:w-auto" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.4 }}>
           <div className="hidden md:flex gap-1 items-center">
             {[1, 1, 0, 1].map((v, i) => (
-              <div key={i} className={`w-1 h-1 ${v ? 'bg-[#00ff41]' : 'bg-white/10'}`} />
+              <motion.div key={i} className={`w-1 h-1 ${v ? 'bg-[#00ff41]' : 'bg-white/10'}`} animate={v ? { opacity: [0.3, 1, 0.3] } : { opacity: 0.5 }} transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }} />
             ))}
           </div>
-          <button className="bg-white text-black font-mono text-[9px] font-black px-5 py-2 uppercase hover:bg-[#00ff41] transition-all duration-200 tracking-widest">
+          <motion.button className="bg-white text-black font-mono text-[9px] font-black px-5 py-2 uppercase hover:bg-[#00ff41] transition-all duration-200 tracking-widest w-full sm:w-auto" whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(0, 255, 65, 0.3)" }} whileTap={{ scale: 0.95 }}>
             Initialize_Scan
-          </button>
-        </div>
-      </div>
+          </motion.button>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

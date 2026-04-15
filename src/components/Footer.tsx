@@ -1,5 +1,17 @@
 'use client';
 
+import { motion } from 'framer-motion';
+import { Magnet } from './reactbits/Magnet';
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 15 },
+  visible: (d = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay: d },
+  }),
+};
+
 const NAV_LINKS = ['HOME', 'ABOUT', 'EXPERIENCE', 'WORK', 'CONTACT'];
 const SOCIALS = [
   { label: 'GitHub', href: 'https://github.com/trs-saurav', path: 'M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.041-1.416-4.041-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z' },
@@ -17,101 +29,294 @@ export default function Footer() {
   };
 
   return (
-    <footer className="w-full bg-[#0a0a0a] border-t border-white/[0.04] px-8 font-mono">
-      <div className="max-w-7xl mx-auto pt-16 pb-8">
+    <motion.footer 
+      className="w-full bg-[#0a0a0a] border-t border-white/[0.04] px-4 sm:px-6 md:px-8 lg:px-12 font-mono"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      viewport={{ once: true }}
+    >
+      <div className="max-w-7xl mx-auto pt-12 sm:pt-16 pb-6 sm:pb-8">
         
         {/* Top Row Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-start mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12 items-start mb-12 sm:mb-16">
           
           {/* Column 1: Brand & Bio */}
-          <div className="space-y-6">
-            <div className="pl-5 border-l-2 border-[#00ff41]/50">
-              <span className="text-white font-black text-xl tracking-wider block leading-none">SAURAV_KUMAR</span>
-              <span className="text-[#00ff41]/50 text-[10px] tracking-[0.3em] uppercase mt-2 block">SYNTHETIC_ARCHITECT // DEL_IN</span>
+          <motion.div 
+            className="space-y-4 sm:space-y-6"
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <div className="pl-3 sm:pl-5 border-l-2 border-[#00ff41]/50">
+              <motion.span 
+                className="text-white font-black text-lg sm:text-xl tracking-wider block leading-none"
+                whileHover={{ color: '#00ff41', x: 4 }}
+                transition={{ duration: 0.3 }}
+              >
+                SAURAV_KUMAR
+              </motion.span>
+              <span className="text-[#00ff41]/50 text-[9px] sm:text-[10px] tracking-[0.3em] uppercase mt-1 sm:mt-2 block">SYNTHETIC_ARCHITECT // DEL_IN</span>
             </div>
-            <div className="space-y-1 text-[11px] leading-relaxed text-[#849495]">
-              <p>&gt; BUILDING_FULL_STACK_SYSTEMS</p>
-              <p>&gt; AI_PIPELINES // DEL_IN</p>
-              <p className="mt-4 opacity-60">AVAILABLE_FOR_DIRECT_INTEGRATION_2026</p>
-            </div>
-          </div>
+            <motion.div 
+              className="space-y-1 text-[10px] sm:text-[11px] leading-relaxed text-[#849495]"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.1 },
+                },
+              }}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.p variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>&gt; BUILDING_FULL_STACK_SYSTEMS</motion.p>
+              <motion.p variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>&gt; AI_PIPELINES // DEL_IN</motion.p>
+              <motion.p 
+                className="mt-4 opacity-60"
+                variants={{ hidden: { opacity: 0 }, visible: { opacity: 0.6 } }}
+              >
+                AVAILABLE_FOR_DIRECT_INTEGRATION_2026
+              </motion.p>
+            </motion.div>
+          </motion.div>
 
           {/* Column 2: Navigation */}
-          <div className="flex flex-col items-center space-y-4">
-            <span className="text-white/20 text-[9px] tracking-[0.4em] uppercase">Navigation</span>
-            <div className="flex flex-col items-center space-y-2">
-              {NAV_LINKS.map((link) => (
-                <button
+          <motion.div 
+            className="flex flex-col items-center space-y-3 sm:space-y-4"
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            custom={0.1}
+            viewport={{ once: true }}
+          >
+            <span className="text-white/20 text-[8px] sm:text-[9px] tracking-[0.4em] uppercase">Navigation</span>
+            <motion.div 
+              className="flex flex-col items-center space-y-1.5 sm:space-y-2"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.08 },
+                },
+              }}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {NAV_LINKS.map((link, idx) => (
+                <motion.button
                   key={link}
                   onClick={() => scrollTo(link.toLowerCase())}
-                  className="text-[#849495] text-[10px] font-bold tracking-[0.1em] hover:text-[#00ff41] transition-colors uppercase"
+                  className="text-[#849495] text-[9px] sm:text-[10px] font-bold tracking-[0.1em] hover:text-[#00ff41] transition-colors uppercase"
+                  whileHover={{ scale: 1.1, x: 4, color: '#00ff41' }}
+                  whileTap={{ scale: 0.95 }}
+                  variants={{
+                    hidden: { opacity: 0, x: -10 },
+                    visible: { opacity: 1, x: 0 },
+                  }}
                 >
                   {link}
-                </button>
+                </motion.button>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Column 3: External Nodes & Reboot */}
-          <div className="flex flex-col items-end space-y-6">
-            <div className="text-right space-y-4">
-              <span className="text-white/20 text-[9px] tracking-[0.4em] uppercase block">External_Nodes</span>
-              <div className="flex gap-3 justify-end">
+          <motion.div 
+            className="flex flex-col items-center md:items-end space-y-4 sm:space-y-6"
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            custom={0.2}
+            viewport={{ once: true }}
+          >
+            <div className="text-center md:text-right space-y-3 sm:space-y-4">
+              <span className="text-white/20 text-[8px] sm:text-[9px] tracking-[0.4em] uppercase block">External_Nodes</span>
+              <motion.div 
+                className="flex gap-2 sm:gap-3 justify-center md:justify-end"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: { staggerChildren: 0.1 },
+                  },
+                }}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
                 {SOCIALS.map((s) => (
-                  <a
-                    key={s.label}
-                    href={s.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-9 h-9 flex items-center justify-center border border-white/10 bg-white/[0.02] hover:border-[#00ff41]/40 hover:bg-[#00ff41]/5 transition-all group"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" className="fill-[#849495] group-hover:fill-[#00ff41] transition-colors">
-                      <path d={s.path} />
-                    </svg>
-                  </a>
+                  <Magnet key={s.label} magnetStrength={0.2}>
+                    <motion.a
+                      href={s.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-7 sm:w-9 h-7 sm:h-9 flex items-center justify-center border border-white/10 bg-white/[0.02] hover:border-[#00ff41]/40 hover:bg-[#00ff41]/5 transition-all group"
+                      whileHover={{ scale: 1.2, borderColor: '#00ff41' }}
+                      whileTap={{ scale: 0.9 }}
+                      variants={{
+                        hidden: { opacity: 0, scale: 0.8 },
+                        visible: { opacity: 1, scale: 1 },
+                      }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" className="sm:w-[16px] sm:h-[16px] fill-[#849495] group-hover:fill-[#00ff41] transition-colors">
+                        <path d={s.path} />
+                      </svg>
+                    </motion.a>
+                  </Magnet>
                 ))}
-              </div>
+              </motion.div>
             </div>
 
-            <div className="flex flex-col items-end gap-3 pt-2">
-              <a 
-                href="/resume.pdf" 
-                download 
-                className="text-[#ffb86c] text-[10px] font-black tracking-widest border border-[#ffb86c]/30 px-4 py-2 hover:bg-[#ffb86c]/10 transition-all uppercase"
-              >
-                ⬇ MANIFEST_PDF
-              </a>
-              <button 
-                onClick={() => scrollTo('home')}
-                className="text-[#00ff41] text-[9px] font-bold tracking-[0.2em] hover:underline underline-offset-4 transition-all"
-              >
-                [ ↑ REBOOT_SEQUENCE ]
-              </button>
-            </div>
-          </div>
+            <motion.div 
+              className="flex flex-col items-center md:items-end gap-2 sm:gap-3 pt-2 sm:pt-4 md:pt-0"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.1, delayChildren: 0.3 },
+                },
+              }}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <Magnet magnetStrength={0.15}>
+                <motion.a 
+                  href="/resume.pdf" 
+                  download 
+                  className="text-[#ffb86c] text-[9px] sm:text-[10px] font-black tracking-widest border border-[#ffb86c]/30 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-[#ffb86c]/10 transition-all uppercase"
+                  whileHover={{ 
+                    scale: 1.05, 
+                    y: -2,
+                    boxShadow: '0 0 20px rgba(255, 184, 108, 0.2)',
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  variants={{
+                    hidden: { opacity: 0, y: 10 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                >
+                  ⬇ MANIFEST_PDF
+                </motion.a>
+              </Magnet>
+              <Magnet magnetStrength={0.15}>
+                <motion.button 
+                  onClick={() => scrollTo('home')}
+                  className="text-[#00ff41] text-[8px] sm:text-[9px] font-bold tracking-[0.2em] hover:underline underline-offset-4 transition-all"
+                  whileHover={{ 
+                    scale: 1.1,
+                    textShadow: '0 0 10px rgba(0, 255, 65, 0.4)',
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  variants={{
+                    hidden: { opacity: 0, y: 10 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                >
+                  [ ↑ REBOOT_SEQUENCE ]
+                </motion.button>
+              </Magnet>
+            </motion.div>
+          </motion.div>
         </div>
 
         {/* Divider */}
-        <div className="h-[1px] w-full bg-white/[0.04] mb-8" />
+        <motion.div 
+          className="h-[1px] w-full bg-white/[0.04] mb-6 sm:mb-8"
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        />
 
         {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-[9px] tracking-widest text-white/20">
-          <span className="uppercase">© 2026 SAURAV_KUMAR // ALL_RIGHTS_RESERVED // SERIAL: DEL-IN-001</span>
+        <motion.div 
+          className="flex flex-col md:flex-row justify-between items-center gap-4 sm:gap-6 text-[8px] sm:text-[9px] tracking-widest text-white/20"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          viewport={{ once: true }}
+        >
+          <motion.span 
+            className="uppercase text-center md:text-left"
+            whileHover={{ color: '#00ff41' }}
+          >
+            © 2026 SAURAV_KUMAR // ALL_RIGHTS_RESERVED // SERIAL: DEL-IN-001
+          </motion.span>
           
           <div className="flex gap-8 items-center">
-            <div className="flex gap-4">
-              <span>SESSION_ID: 0x8FF5</span>
-              <span className="text-[#00ff41]/40">BUILD: STABLE</span>
-              <span>POWER: MAX</span>
-            </div>
-            <div className="flex gap-1">
-              <div className="w-1 h-1 bg-[#00ff41] animate-pulse" />
-              <div className="w-1 h-1 bg-[#00ff41]/40" />
-              <div className="w-1 h-1 bg-[#00ff41]/10" />
-            </div>
+            <motion.div 
+              className="flex gap-4"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.1 },
+                },
+              }}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.span variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>SESSION_ID: 0x8FF5</motion.span>
+              <motion.span 
+                className="text-[#00ff41]/40"
+                variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+                animate={{ color: ['rgba(0, 255, 65, 0.4)', 'rgba(0, 255, 65, 0.8)', 'rgba(0, 255, 65, 0.4)'] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
+                BUILD: STABLE
+              </motion.span>
+              <motion.span variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>POWER: MAX</motion.span>
+            </motion.div>
+            <motion.div 
+              className="flex gap-1"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.15 },
+                },
+              }}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.div 
+                className="w-1 h-1 bg-[#00ff41]"
+                animate={{ 
+                  opacity: [1, 0.3, 1],
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+              />
+              <motion.div 
+                className="w-1 h-1 bg-[#00ff41]/40"
+                animate={{ 
+                  opacity: [0.4, 0.1, 0.4],
+                  scale: [1, 1.15, 1],
+                }}
+                transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
+                variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+              />
+              <motion.div 
+                className="w-1 h-1 bg-[#00ff41]/10"
+                animate={{ 
+                  opacity: [0.1, 0.3, 0.1],
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
+                variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+              />
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </footer>
+    </motion.footer>
   );
 }

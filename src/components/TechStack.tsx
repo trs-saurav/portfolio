@@ -70,7 +70,7 @@ export default function TechStack() {
     <section 
       id="techstack" 
       className="group" 
-      style={{ width: '100%', padding: '0 2rem', position: 'relative', cursor: 'none' }}
+      style={{ width: '100%', padding: '0 1rem', position: 'relative', cursor: 'none' }}
     >
       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <TargetCursor targetSelector=".cursor-target" />
@@ -80,16 +80,16 @@ export default function TechStack() {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        style={{ width: '80vw', maxWidth: 1200, margin: '0 auto', paddingTop: '6rem', paddingBottom: '4rem' }}
+        style={{ width: '100%', maxWidth: 1200, margin: '0 auto', paddingTop: 'clamp(3rem, 6vw, 6rem)', paddingBottom: 'clamp(2rem, 4vw, 4rem)' }}
       >
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          className="mb-14 pl-5 border-l-2 border-[#00ff41]/40"
+          className="mb-10 sm:mb-14 pl-4 sm:pl-5 border-l-2 border-[#00ff41]/40"
         >
-          <span className="hud-tag block mb-2 opacity-50">CAPABILITY_MATRIX // SYSTEM_STACK</span>
-          <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter uppercase leading-none">
+          <span className="hud-tag block mb-2 opacity-50 text-[8px] sm:text-[9px]">CAPABILITY_MATRIX // SYSTEM_STACK</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter uppercase leading-none">
             <LetterGlitch text="TECH_ARSENAL" interval={5000} />
           </h2>
         </motion.div>
@@ -105,53 +105,72 @@ export default function TechStack() {
               style={{
                 background: 'rgba(255, 255, 255, 0.02)',
                 backdropFilter: 'blur(8px)',
-                display: 'grid',
-                gridTemplateColumns: 'minmax(180px, 200px) 1fr',
                 borderLeft: `2px solid ${activeRow === ci ? cat.color : `${cat.color}22`}`,
                 transition: 'border-color 0.3s ease',
               }}
             >
-              {/* Left label (Sidebar Fixed state logic) */}
-              <div style={{
-                borderRight: '1px solid rgba(255,255,255,0.04)',
-                padding: '1.5rem 1.25rem',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                gap: '0.35rem',
-                background: activeRow === ci ? 'rgba(255,255,255,0.03)' : 'var(--surface-container-high)',
-                transition: 'background 0.3s ease'
-              }}>
-                <span style={{ fontSize: '0.55rem', fontWeight: 700, color: cat.color, letterSpacing: '0.25em' }}>MODULE</span>
-                <span style={{ color: 'var(--foreground)', fontWeight: 900, fontSize: '0.9rem', letterSpacing: '0.06em' }}>{cat.category}</span>
+              {/* Mobile: full-width category label bar */}
+              <div
+                className="md:hidden flex items-center gap-3 px-4 py-2.5 border-b border-white/5"
+                style={{
+                  background: activeRow === ci ? 'rgba(255,255,255,0.03)' : 'var(--surface-container-high)',
+                  transition: 'background 0.3s ease',
+                }}
+              >
+                <span style={{ fontSize: '0.45rem', fontWeight: 700, color: cat.color, letterSpacing: '0.25em' }}>MODULE</span>
+                <span style={{ color: 'var(--foreground)', fontWeight: 900, fontSize: '0.8rem', letterSpacing: '0.06em' }}>{cat.category}</span>
               </div>
 
-              {/* Right: tech cards */}
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-[1px]">
-                {cat.items.map((tech, ti) => (
+              {/* md+: sidebar two-column layout (original desktop design) */}
+              <div className="hidden md:grid" style={{ gridTemplateColumns: 'minmax(160px, 200px) 1fr' }}>
+                <div style={{
+                  borderRight: '1px solid rgba(255,255,255,0.04)',
+                  padding: '1.5rem 1.25rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  gap: '0.35rem',
+                  background: activeRow === ci ? 'rgba(255,255,255,0.03)' : 'var(--surface-container-high)',
+                  transition: 'background 0.3s ease',
+                }}>
+                  <span style={{ fontSize: '0.55rem', fontWeight: 700, color: cat.color, letterSpacing: '0.25em' }}>MODULE</span>
+                  <span style={{ color: 'var(--foreground)', fontWeight: 900, fontSize: '0.9rem', letterSpacing: '0.06em' }}>{cat.category}</span>
+                </div>
+                <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-[1px]">
+                  {cat.items.map((tech) => (
+                    <motion.div
+                      className="cursor-target relative p-5 flex items-center gap-3 overflow-hidden transition-colors"
+                      key={tech.name}
+                      style={{ background: 'rgba(13, 17, 23, 0.3)' }}
+                      whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
+                    >
+                      <div className="absolute top-0 right-0 w-3 h-[1px] bg-[#00ff41]/40 opacity-0 group-hover/target:opacity-100 transition-opacity" />
+                      <div className="absolute top-0 right-0 w-[1px] h-3 bg-[#00ff41]/40 opacity-0 group-hover/target:opacity-100 transition-opacity" />
+                      <img src={tech.icon} alt={tech.name} width={24} height={24}
+                        style={{ filter: tech.name === 'Next.js' || tech.name === 'Express' ? 'invert(1)' : 'none', opacity: 0.9 }} />
+                      <div className="flex flex-col">
+                        <span className="text-white text-[0.8rem] font-bold tracking-wide">{tech.name}</span>
+                        <span style={{ color: cat.color, fontSize: '0.5rem', fontWeight: 700, letterSpacing: '0.15em' }}>{tech.tag}</span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mobile: tech cards in 2-col grid below the label */}
+              <div className="md:hidden grid grid-cols-2 sm:grid-cols-3 gap-[1px]">
+                {cat.items.map((tech) => (
                   <motion.div
-                    className="cursor-target relative p-5 flex items-center gap-3 overflow-hidden transition-colors"
+                    className="relative p-3 flex items-center gap-2 overflow-hidden transition-colors"
                     key={tech.name}
                     style={{ background: 'rgba(13, 17, 23, 0.3)' }}
                     whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
                   >
-                    {/* Hover Corner Brackets (Fix #1: Transition handled via CSS group-hover) */}
-                    <div className="absolute top-0 right-0 w-3 h-[1px] bg-[#00ff41]/40 opacity-0 group-hover/target:opacity-100 transition-opacity" />
-                    <div className="absolute top-0 right-0 w-[1px] h-3 bg-[#00ff41]/40 opacity-0 group-hover/target:opacity-100 transition-opacity" />
-
-                    <img
-                      src={tech.icon}
-                      alt={tech.name}
-                      width={24}
-                      height={24}
-                      style={{
-                        filter: tech.name === 'Next.js' || tech.name === 'Express' ? 'invert(1)' : 'none',
-                        opacity: 0.9,
-                      }}
-                    />
-                    <div className="flex flex-col">
-                      <span className="text-white text-[0.8rem] font-bold tracking-wide">{tech.name}</span>
-                      <span style={{ color: cat.color, fontSize: '0.5rem', fontWeight: 700, letterSpacing: '0.15em' }}>{tech.tag}</span>
+                    <img src={tech.icon} alt={tech.name} width={18} height={18}
+                      style={{ filter: tech.name === 'Next.js' || tech.name === 'Express' ? 'invert(1)' : 'none', opacity: 0.85, flexShrink: 0 }} />
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-white text-[0.7rem] font-bold truncate">{tech.name}</span>
+                      <span style={{ color: cat.color, fontSize: '0.42rem', fontWeight: 700, letterSpacing: '0.1em' }}>{tech.tag}</span>
                     </div>
                   </motion.div>
                 ))}
@@ -162,13 +181,12 @@ export default function TechStack() {
 
         {/* Summary strip */}
         <motion.div
-          className="mt-[1px] bg-white/[0.03] backdrop-blur-md p-4 flex justify-between items-center"
+          className="mt-[1px] bg-white/[0.03] backdrop-blur-md p-3 sm:p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-6"
         >
-          <span className="hud-tag text-[0.65rem] opacity-30 tracking-widest">
+          <span className="hud-tag text-[0.6rem] sm:text-[0.65rem] opacity-30 tracking-widest">
             TOTAL_MODULES: {STACK.reduce((a, c) => a + c.items.length, 0)} // CATEGORIES: 5
           </span>
-          <span className="hud-tag text-[0.65rem] opacity-30 tracking-widest">STACK_VERSION: 2026.Q2</span>
-        </motion.div>
+          <span className="hud-tag text-[0.6rem] sm:text-[0.65rem] opacity-30 tracking-widest\">STACK_VERSION: 2026.Q2</span>       </motion.div>
       </motion.div>
     </section>
   );
