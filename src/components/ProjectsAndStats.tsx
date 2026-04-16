@@ -59,17 +59,29 @@ export default function ProjectsAndStats() {
   useEffect(() => {
     const initializeData = async () => {
       try {
-        const response = await fetch('/api/leetcode?username=trs_saurav');
-        if (response.ok) {
-          const data = await response.json();
+        // Fetch GitHub stats
+        const githubResponse = await fetch('/api/github?username=trs-saurav');
+        if (githubResponse.ok) {
+          const githubData = await githubResponse.json();
           setStats(prev => ({
             ...prev,
-            leetcode: `${data.stats.totalSolved}+`,
-            acc: data.stats.acceptanceRate
+            repos: `${githubData.stats.repos}+`,
+            followers: `${githubData.stats.followers}+`
+          }));
+        }
+
+        // Fetch LeetCode stats
+        const leetcodeResponse = await fetch('/api/leetcode?username=trs_saurav');
+        if (leetcodeResponse.ok) {
+          const leetcodeData = await leetcodeResponse.json();
+          setStats(prev => ({
+            ...prev,
+            leetcode: `${leetcodeData.stats.totalSolved}+`,
+            acc: leetcodeData.stats.acceptanceRate
           }));
         }
       } catch (error) {
-        console.error('Error fetching LeetCode stats:', error);
+        console.error('Error fetching stats:', error);
       } finally {
         setLoading(false);
       }
@@ -82,11 +94,11 @@ export default function ProjectsAndStats() {
     <section id="projects" className="relative w-full px-4 sm:px-6 md:px-12 bg-transparent pb-20 sm:pb-32">
       <div className="w-full grid grid-cols-1 lg:grid-cols-[140px_1fr] gap-0 relative border-t border-white/5 pt-16 sm:pt-24" style={{ maxWidth: '1400px', margin: '0 auto' }}>
 
-        <div className="relative lg:hidden mb-12 pl-6 border-l-4 border-[#ff6daf] col-span-full">
+        <div className="relative lg:hidden mb-12 pl-6 border-l-4 border-[#ffb86c] col-span-full">
           <h2 className="text-2xl sm:text-4xl font-black text-white uppercase tracking-tighter leading-tight">
             <LetterGlitch text="PROJECT_LOG" interval={5000} />
           </h2>
-          <span className="font-mono text-[8px] tracking-[0.3em] text-[#ff6daf] uppercase opacity-60 mt-2 block">
+          <span className="font-mono text-[8px] tracking-[0.3em] text-[#ffb86c] uppercase opacity-60 mt-2 block">
             DEPLOYMENT_LOG // MISSION_PROFILES
           </span>
         </div>
@@ -96,7 +108,7 @@ export default function ProjectsAndStats() {
               <h2 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter whitespace-nowrap leading-none">
                 <LetterGlitch text="PROJECT_LOG" interval={5000} />
               </h2>
-              <span className="font-mono text-[9px] tracking-[0.5em] text-[#ff6daf] uppercase whitespace-nowrap opacity-60 mt-4 border-l border-[#ff6daf]/30 pl-2 leading-none">
+              <span className="font-mono text-[9px] tracking-[0.5em] text-[#ffb86c] uppercase whitespace-nowrap opacity-60 mt-4 border-l border-[#ffb86c]/30 pl-2 leading-none">
                 DEPLOYMENT_LOG // MISSION_PROFILES
               </span>
           </div>
@@ -161,7 +173,7 @@ export default function ProjectsAndStats() {
         </div>
       </div>
 
-      <div className="w-[80vw] mx-auto pt-4 sm:pt-6 pb-16 sm:pb-24">
+      <div className="w-[80vw] mx-auto pt-16 sm:pt-24 pb-16 sm:pb-24">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}

@@ -52,7 +52,7 @@ const STACK = [
   },
   {
     category: 'DEVOPS / TOOLS',
-    color: '#ff6daf',
+    color: '#ffb86c',
     items: [
       { name: 'Docker',      tag: 'CONTAINER',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
       { name: 'Git',         tag: 'VCS',         icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg' },
