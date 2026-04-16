@@ -8,11 +8,16 @@ interface CalendarDay {
 }
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 interface LeetCodeHeatmapProps {
   username: string;
   year?: number;
+}
+
+interface MonthCalendar {
+  month: number;
+  weeks: (CalendarDay | null)[][];
 }
 
 export function LeetCodeHeatmap({ username, year = new Date().getFullYear() }: LeetCodeHeatmapProps) {
@@ -44,52 +49,62 @@ export function LeetCodeHeatmap({ username, year = new Date().getFullYear() }: L
     fetchData();
   }, [username]);
 
-  const weeks = useMemo(() => {
+  const monthCalendars = useMemo(() => {
     if (!calendarData || calendarData.length === 0) {
       return [];
     }
 
-    // Find the current year's first and last date
-    const jan1 = new Date(year, 0, 1);
-    const dec31 = new Date(year, 11, 31);
-    
-    // Start from the first day of the year, or the previous Sunday if needed
-    const startDate = new Date(jan1);
-    startDate.setDate(startDate.getDate() - jan1.getDay());
-
     const dataMap = new Map(calendarData.map(d => [d.date, d]));
-    const weeks: (CalendarDay | null)[][] = [];
-    let currentWeek: (CalendarDay | null)[] = [];
+    const calendars: MonthCalendar[] = [];
 
-    let current = new Date(startDate);
-    
-    while (current <= dec31 || currentWeek.length > 0) {
-      const dateStr = current.toISOString().split('T')[0];
-      const day = dataMap.get(dateStr) || { date: dateStr, count: 0 };
+    // Build calendar for each month
+    for (let monthIdx = 0; monthIdx < 12; monthIdx++) {
+      const firstDay = new Date(year, monthIdx, 1);
+      const lastDay = new Date(year, monthIdx + 1, 0);
       
-      currentWeek.push(day);
+      // Start from the Sunday of the first week
+      const startDate = new Date(firstDay);
+      startDate.setDate(startDate.getDate() - firstDay.getDay());
 
-      if (currentWeek.length === 7) {
-        weeks.push([...currentWeek]);
-        currentWeek = [];
+      const weeks: (CalendarDay | null)[][] = [];
+      let currentWeek: (CalendarDay | null)[] = [];
+      let current = new Date(startDate);
+
+      while (current <= lastDay || currentWeek.length > 0) {
+        const dateStr = current.toISOString().split('T')[0];
+        const day = dataMap.get(dateStr) || { date: dateStr, count: 0 };
+        
+        // Only include dates in the current month
+        const isInMonth = current.getMonth() === monthIdx && current.getFullYear() === year;
+        currentWeek.push(isInMonth ? day : null);
+
+        if (currentWeek.length === 7) {
+          weeks.push([...currentWeek]);
+          currentWeek = [];
+        }
+
+        current.setDate(current.getDate() + 1);
+        
+        if (current > lastDay && currentWeek.length > 0) {
+          weeks.push([...currentWeek]);
+          break;
+        }
       }
 
-      current.setDate(current.getDate() + 1);
-      
-      if (current > dec31 && currentWeek.length > 0) {
-        weeks.push([...currentWeek]);
-        break;
-      }
+      calendars.push({
+        month: monthIdx,
+        weeks,
+      });
     }
 
-    return weeks;
+    return calendars;
   }, [year, calendarData]);
 
   const getColorForCount = (count: number): string => {
-    if (count === 0) return 'rgba(0, 255, 65, 0.1)';
-    if (count < 2) return 'rgba(0, 255, 65, 0.25)';
-    if (count < 5) return 'rgba(0, 255, 65, 0.5)';
-    if (count < 10) return 'rgba(0, 255, 65, 0.75)';
+    if (count === 0) return '#161b22';
+    if (count < 2) return 'rgba(0, 255, 65, 0.2)';
+    if (count < 5) return 'rgba(0, 255, 65, 0.4)';
+    if (count < 10) return 'rgba(0, 255, 65, 0.65)';
     return 'rgba(0, 255, 65, 1)';
   };
 
@@ -112,108 +127,91 @@ export function LeetCodeHeatmap({ username, year = new Date().getFullYear() }: L
   if (!calendarData || calendarData.length === 0) {
     return (
       <div className="w-full h-[200px] flex items-center justify-center bg-[#0d1117]/50 border border-white/10">
-        <div className="font-mono text-[10px] text-[#849495]">NO_ACTIVITY_DATA // LOADINGDEFAULT_VIEW</div>
+        <div className="font-mono text-[10px] text-[#849495]">NO_ACTIVITY_DATA</div>
       </div>
     );
   }
 
+  const cellSize = 11;
+  const cellPadding = 1;
+  const cellSpacing = cellSize + cellPadding;
+  const dayLabelWidth = 16;
+
   return (
-    <div className="w-full overflow-x-auto scrollbar-hide bg-[#0d1117]/50 border border-white/10 rounded p-4 min-h-[200px]">
-      {loading && (
-        <div className="h-full flex items-center justify-center">
-          <div className="font-mono text-[10px] text-[#849495]">LOADING_HEATMAP...</div>
-        </div>
-      )}
-      
-      {!loading && error && (
-        <div className="h-full flex items-center justify-center">
-          <div className="font-mono text-[10px] text-[#ff6daf]">ERROR: {error}</div>
-        </div>
-      )}
-
-      {!loading && !error && (!calendarData || calendarData.length === 0) && (
-        <div className="h-full flex items-center justify-center">
-          <div className="font-mono text-[10px] text-[#849495]">NO_SUBMISSION_DATA_AVAILABLE</div>
-        </div>
-      )}
-
-      {!loading && !error && calendarData && calendarData.length > 0 && weeks.length > 0 && (
-        <svg
-          width="100%"
-          height={200}
-          viewBox={`0 0 ${Math.max(weeks.length * 16 + 60, 600)} 200`}
-          preserveAspectRatio="xMinYMid meet"
-          style={{ minWidth: '600px', display: 'block' }}
-        >
-          {/* Month labels - positioned based on weeks */}
-          {MONTHS.map((month, monthIdx) => {
-            const monthStart = new Date(year, monthIdx, 1);
-            const weekOffset = monthIdx === 0 ? 0 : Math.floor((monthStart.getDay() + monthStart.getDate() - 1) / 7);
+    <div className="w-full flex justify-center">
+      <div className="bg-[#0d1117]/50 rounded px-1 py-2">
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex gap-2" style={{ minWidth: 'min-content' }}>
+          {monthCalendars.map((calendar, calendarIdx) => {
+            const monthSvgWidth = (calendarIdx === 0 ? dayLabelWidth : 0) + 7 * cellSpacing + 2;
+            const monthSvgHeight = 16 + calendar.weeks.length * cellSpacing + 2;
+            
             return (
-              <text
-                key={`month-${month}`}
-                x={weekOffset * 16 + 50}
-                y={15}
-                fontSize="11"
-                fill="#849495"
-                fontFamily="'Courier New', monospace"
-                fontWeight="bold"
-                textAnchor="start"
-              >
-                {month}
-              </text>
-            );
-          })}
-
-          {/* Day of week labels */}
-          {DAYS.map((day, idx) => (
-            <text
-              key={`day-${day}`}
-              x={40}
-              y={50 + idx * 18}
-              fontSize="10"
-              fill="#849495"
-              fontFamily="'Courier New', monospace"
-              textAnchor="end"
-            >
-              {day.charAt(0)}
-            </text>
-          ))}
-
-          {/* Calendar grid */}
-          {weeks.map((week, weekIdx) =>
-            week.map((day, dayIdx) =>
-              day ? (
-                <g key={`${weekIdx}-${dayIdx}`}>
-                  <rect
-                    x={50 + weekIdx * 16}
-                    y={48 + dayIdx * 18}
-                    width={14}
-                    height={14}
-                    fill={getColorForCount(day.count)}
-                    stroke="rgba(0, 255, 65, 0.2)"
-                    strokeWidth={0.5}
-                    rx={2}
-                  />
-                  {day.count > 0 && (
+              <div key={`month-${calendar.month}`} className="flex flex-col items-center flex-shrink-0">
+                <h3 className="text-[10px] font-mono font-bold text-[#849495] mb-0.5">
+                  {MONTHS[calendar.month]}
+                </h3>
+                <svg
+                  width={monthSvgWidth}
+                  height={monthSvgHeight}
+                  style={{ display: 'block' }}
+                >
+                  {/* Day labels only on first month - show all 7 weekdays */}
+                  {calendarIdx === 0 && DAYS.map((day, dayIdx) => (
                     <text
-                      x={57 + weekIdx * 16}
-                      y={58 + dayIdx * 18}
+                      key={`day-${dayIdx}`}
+                      x={4}
+                      y={16 + dayIdx * cellSpacing + cellSize / 2}
                       fontSize="7"
                       fill="#849495"
                       fontFamily="'Courier New', monospace"
-                      textAnchor="middle"
-                      fontWeight="bold"
+                      textAnchor="end"
+                      alignmentBaseline="middle"
                     >
-                      {day.count > 9 ? '9+' : day.count}
+                      {day}
                     </text>
+                  ))}
+
+                  {/* Calendar grid - show all weeks and all 7 weekdays */}
+                  {calendar.weeks.map((week, weekIdx) =>
+                    week.map((day, dayIdx) =>
+                      day && day.count !== undefined ? (
+                        <g key={`${weekIdx}-${dayIdx}`}>
+                          <rect
+                            x={(calendarIdx === 0 ? dayLabelWidth : 0) + weekIdx * cellSpacing}
+                            y={16 + dayIdx * cellSpacing}
+                            width={cellSize}
+                            height={cellSize}
+                            fill={getColorForCount(day.count)}
+                            stroke="rgba(0, 255, 65, 0.15)"
+                            strokeWidth={0.5}
+                            rx={2}
+                          />
+                          {day.count > 0 && (
+                            <text
+                              x={(calendarIdx === 0 ? dayLabelWidth : 0) + weekIdx * cellSpacing + cellSize / 2}
+                              y={16 + dayIdx * cellSpacing + cellSize / 2}
+                              fontSize="4"
+                              fill="#849495"
+                              fontFamily="'Courier New', monospace"
+                              textAnchor="middle"
+                              alignmentBaseline="middle"
+                              fontWeight="bold"
+                            >
+                              {day.count > 99 ? '99+' : day.count}
+                            </text>
+                          )}
+                        </g>
+                      ) : null
+                    )
                   )}
-                </g>
-              ) : null
-            )
-          )}
-        </svg>
-      )}
+                </svg>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
     </div>
   );
 }

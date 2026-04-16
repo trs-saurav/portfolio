@@ -161,7 +161,7 @@ export default function ProjectsAndStats() {
         </div>
       </div>
 
-      <div className="w-[80vw] mx-auto pt-24 sm:pt-32">
+      <div className="w-[80vw] mx-auto pt-4 sm:pt-6 pb-16 sm:pb-24">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -218,14 +218,11 @@ export default function ProjectsAndStats() {
             <span className="font-mono text-[7px] sm:text-[8px] text-[#849495] uppercase">MORE</span>
           </div>
 
-          <div className="p-4 sm:p-6 w-full flex justify-center overflow-x-auto scrollbar-hide min-h-[180px] sm:min-h-[200px]">
+          <div className="p-2 sm:p-4 w-full flex flex-col justify-center items-center min-h-[180px] sm:min-h-[200px]">
             <style>{`
               .leetcode-heatmap {
-                transform: scale(1);
-                transform-origin: center;
                 display: flex;
                 justify-content: center;
-                width: 100%;
               }
               
               .leetcode-heatmap svg {
@@ -255,11 +252,13 @@ export default function ProjectsAndStats() {
                 fill: #849495 !important;
               }
             `}</style>
-            {heatSrc === 'github' ? (
-              <GitHubCalendar username="trs-saurav" />
-            ) : (
-              <LeetCodeHeatmap username="trs_saurav" />
-            )}
+            <div className="overflow-x-auto scrollbar-hide w-full flex justify-center">
+              {heatSrc === 'github' ? (
+                <GitHubCalendar username="trs-saurav" />
+              ) : (
+                <LeetCodeHeatmap username="trs_saurav" />
+              )}
+            </div>
           </div>
 
           <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-white/10 bg-white/[0.02]">
