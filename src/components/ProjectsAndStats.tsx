@@ -2,9 +2,10 @@
 
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { GitHubCalendar } from 'react-github-calendar';
 import { DecryptedText } from './reactbits/DecryptedText';
 import { LetterGlitch } from './reactbits/LetterGlitch';
-import { LeetCodeHeatmapWrapper } from './LeetCodeHeatmapWrapper';
+import { LeetCodeHeatmap } from './LeetCodeHeatmap';
 
 /* ── DATA ────────────────────────────────────────────── */
 const PROJECTS = [
@@ -53,214 +54,43 @@ const LIVE_STATS = [
 export default function ProjectsAndStats() {
   const [stats, setStats] = useState({ repos: '22+', followers: '12+', leetcode: '80+', acc: '68.5%' });
   const [heatSrc, setHeatSrc] = useState('github');
-  const [ghHeat, setGhHeat] = useState<number[]>(new Array(364).fill(0));
-  const [leetHeat, setLeetHeat] = useState<number[]>(new Array(364).fill(0));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
+    const initializeData = async () => {
+      try {
+        const response = await fetch('/api/leetcode?username=trs_saurav');
+        if (response.ok) {
+          const data = await response.json();
+          setStats(prev => ({
+            ...prev,
+            leetcode: `${data.stats.totalSolved}+`,
+            acc: data.stats.acceptanceRate
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching LeetCode stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    // 1. Fetch GitHub Profile
-    fetch('https://api.github.com/users/trs-saurav')
-      .then(r => r.json())
-      .then(d => {
-        if (d.public_repos) setStats(s => ({ ...s, repos: d.public_repos, followers: d.followers || '12+' }));
-      })
-      .catch(() => console.error('GitHub profile fetch failed'));
-
-    // 2. Fetch GitHub Contributions (Using GitHub GraphQL or alternative API)
-    fetchGitHubContributions();
-
-    // 3. Fetch LeetCode Data
-    fetchLeetCodeData();
-
-    setLoading(false);
+    initializeData();
   }, []);
-
-  const fetchGitHubContributions = async () => {
-    try {
-      // Use the JoGruber API which provides reliable contribution data
-      const response = await fetch('https://github-contributions-api.jogruber.de/v4/trs-saurav');
-      
-      if (!response.ok) throw new Error('API response not ok');
-      
-      const data = await response.json();
-      
-      // Log the actual API response structure for debugging
-      console.log('GitHub API raw response:', {
-        type: typeof data,
-        isArray: Array.isArray(data),
-        keys: data && typeof data === 'object' ? Object.keys(data) : 'N/A',
-        sample: Array.isArray(data) ? data.slice(0, 3) : (data && data.contributions ? data.contributions.slice(0, 3) : data)
-      });
-
-      // Handle different possible response structures
-      let contributions: any[] = [];
-      
-      // The API returns a year object with months that contain days
-      if (data && data.year && typeof data.year === 'object') {
-        // GitHub GraphQL format: { year: { "2024": { "January": [...], ... } } }
-        const yearData = data.year;
-        for (const year in yearData) {
-          const months = yearData[year];
-          for (const month in months) {
-            const days = months[month];
-            if (Array.isArray(days)) {
-              contributions.push(...days);
-            }
-          }
-        }
-      } else if (Array.isArray(data)) {
-        // Direct array response
-        contributions = data;
-      } else if (data && data.contributions && Array.isArray(data.contributions)) {
-        // Nested contributions array
-        contributions = data.contributions;
-      } else if (data && data.weeks && Array.isArray(data.weeks)) {
-        // GitHub GraphQL format (weeks array)
-        contributions = data.weeks.flatMap((week: any) => week.days || []);
-      } else if (data && typeof data === 'object' && !Array.isArray(data)) {
-        // Try to extract any array from the object
-        for (const key in data) {
-          if (Array.isArray(data[key])) {
-            contributions = data[key];
-            break;
-          }
-        }
-      }
-
-      console.log('Extracted contributions count:', contributions.length);
-      console.log('First 3 contribution items:', contributions.slice(0, 3));
-      console.log('LAST 3 contribution items:', contributions.slice(-3));
-      
-      if (contributions.length > 0) {
-        // Take first 364 days (API returns newest first, so first 364 = last 364 days)
-        const startIdx = 0;
-        const endIdx = Math.min(364, contributions.length);
-        const levels = contributions
-          .slice(startIdx, endIdx)
-          .map((c: any, idx: number) => {
-            // Handle various level formats
-            let level = 0;
-            if (typeof c === 'number') {
-              level = c;
-            } else if (typeof c === 'object' && c !== null) {
-              level = typeof c.level === 'number' ? c.level : 
-                      typeof c.count === 'number' ? Math.min(c.count / 5, 4) :
-                      parseInt(c.level) || parseInt(c.count) || 0;
-            }
-            // Log last 5 items to see conversion
-            if (idx >= Math.max(0, contributions.length - 364 - 5)) {
-              console.log(`Item (from end) ${contributions.length - 364 - idx}:`, c, '-> level:', level);
-            }
-            return Math.min(Math.max(0, level), 4);
-          });
-        
-        // Ensure we have exactly 364 entries by padding with zeros at start
-        while (levels.length < 364) {
-          levels.unshift(0);
-        }
-        
-        if (levels.length >= 364) {
-          setGhHeat(levels);
-          const activeCount = levels.filter((l: number) => l > 0).length;
-          console.log('GitHub heatmap loaded:', activeCount, 'days with contributions, total levels:', levels.length);
-          return;
-        }
-      }
-
-      throw new Error('No valid contribution data received');
-    } catch (err) {
-      console.error('GitHub contributions fetch failed:', err);
-      // Use fallback realistic data
-      setGhHeat(generateRealisticHeatmap());
-    }
-  };
-
-  const fetchLeetCodeData = async () => {
-    try {
-      const response = await fetch('https://leetcode-stats-api.herokuapp.com/trs_saurav');
-      const data = await response.json();
-
-      if (data.status === "success") {
-        setStats(s => ({
-          ...s,
-          leetcode: data.totalSolved || '80+',
-          acc: `${(data.acceptanceRate || 68).toFixed(1)}%`
-        }));
-
-        // Generate LeetCode-style heatmap based on submission pattern
-        const leetHeatmap = generateLeetCodeHeatmap(data);
-        setLeetHeat(leetHeatmap);
-      }
-    } catch (err) {
-      console.error('LeetCode fetch failed:', err);
-      // Fallback data
-      setStats(s => ({
-        ...s,
-        leetcode: '80+',
-        acc: '68%'
-      }));
-      setLeetHeat(generateRealisticHeatmap());
-    }
-  };
-
-  const generateRealisticHeatmap = (): number[] => {
-    // Generate a semi-realistic contribution pattern
-    const heatmap = new Array(364).fill(0);
-    const today = new Date();
-
-    for (let i = 0; i < 364; i++) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-      const dayOfWeek = date.getDay();
-      const rand = Math.random();
-
-      // Higher probability of contributions on weekdays
-      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-        if (rand > 0.3) {
-          heatmap[363 - i] = rand > 0.85 ? 4 : rand > 0.65 ? 3 : rand > 0.4 ? 2 : 1;
-        }
-      } else if (rand > 0.6) {
-        heatmap[363 - i] = rand > 0.9 ? 3 : rand > 0.75 ? 2 : 1;
-      }
-    }
-
-    return heatmap;
-  };
-
-  const generateLeetCodeHeatmap = (leetcodeData: any): number[] => {
-    // Generate heatmap based on submission timestamp patterns
-    const heatmap = new Array(364).fill(0);
-    const totalSolved = leetcodeData.totalSolved || 80;
-    
-    // Create a pattern where we have more submissions on recent dates
-    const submissionDensity = Math.min(totalSolved / 150, 1);
-    
-    for (let i = 0; i < 364; i++) {
-      const dayOfWeek = (364 - i) % 7;
-      const rand = Math.random();
-      
-      // Higher probability for weekdays
-      const weekdayBonus = (dayOfWeek !== 0 && dayOfWeek !== 6) ? 0.3 : 0;
-      const adjustedProb = submissionDensity + weekdayBonus;
-      
-      if (rand < Math.min(adjustedProb, 1)) {
-        const levelRand = Math.random();
-        heatmap[i] = levelRand > 0.85 ? 4 : levelRand > 0.65 ? 3 : levelRand > 0.4 ? 2 : 1;
-      }
-    }
-
-    return heatmap;
-  };
-
-  const heat = heatSrc === 'github' ? ghHeat : leetHeat;
 
   return (
     <section id="projects" className="relative w-full px-4 sm:px-6 md:px-12 bg-transparent pb-20 sm:pb-32">
       <div className="w-full grid grid-cols-1 lg:grid-cols-[140px_1fr] gap-0 relative border-t border-white/5 pt-16 sm:pt-24" style={{ maxWidth: '1400px', margin: '0 auto' }}>
+
+        <div className="relative lg:hidden mb-12 pl-6 border-l-4 border-[#ff6daf] col-span-full">
+          <h2 className="text-2xl sm:text-4xl font-black text-white uppercase tracking-tighter leading-tight">
+            <LetterGlitch text="PROJECT_LOG" interval={5000} />
+          </h2>
+          <span className="font-mono text-[8px] tracking-[0.3em] text-[#ff6daf] uppercase opacity-60 mt-2 block">
+            DEPLOYMENT_LOG // MISSION_PROFILES
+          </span>
+        </div>
         
-        {/* ── SIDEBAR (Desktop) ── */}
         <div className="relative border-r border-white/10 hidden lg:block">
           <div className="sticky top-[15vh] flex flex-col items-center py-12 rotate-180 [writing-mode:vertical-lr]">
               <h2 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter whitespace-nowrap leading-none">
@@ -272,17 +102,6 @@ export default function ProjectsAndStats() {
           </div>
         </div>
 
-        {/* ── MOBILE PROJECT_LOG HEADER ── */}
-        <div className="relative lg:hidden mb-12 pl-6 border-l-4 border-[#ff6daf]">
-          <h2 className="text-2xl sm:text-4xl font-black text-white uppercase tracking-tighter leading-tight">
-            <LetterGlitch text="PROJECT_LOG" interval={5000} />
-          </h2>
-          <span className="font-mono text-[8px] tracking-[0.3em] text-[#ff6daf] uppercase opacity-60 mt-2 block">
-            DEPLOYMENT_LOG // MISSION_PROFILES
-          </span>
-        </div>
-
-        {/* ── PROJECT STACK ── */}
         <div className="flex flex-col items-center gap-[30vh] sm:gap-[35vh] lg:gap-[45vh] lg:pl-20 pb-12 sm:pb-20 lg:pb-[20vh] px-0">
           {PROJECTS.map((proj, i) => (
             <motion.div
@@ -295,7 +114,7 @@ export default function ProjectsAndStats() {
                 top: `calc(15vh + ${i * 40}px)`,
                 maxWidth: 'calc(100% - 2rem)',
                 margin: '0 auto',
-                zIndex: i 
+                zIndex: i + 1
               }}
             >
               <span className="absolute -top-4 -right-4 text-9xl font-black text-white/[0.03] font-mono pointer-events-none select-none">
@@ -342,12 +161,11 @@ export default function ProjectsAndStats() {
         </div>
       </div>
 
-      {/* ── TELEMETRY & HEATMAP SECTION ── */}
-      <div className="w-full pt-24 sm:pt-32" style={{ maxWidth: '1400px', margin: '0 auto', paddin: '0 1rem' }}>
+      <div className="w-[80vw] mx-auto pt-24 sm:pt-32">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
-          className="mb-8 sm:mb-12 pl-4 sm:pl-6 border-l-4 border-[#ffb86c] px-4 sm:px-0"
+          className="mb-8 sm:mb-12 pl-4 sm:pl-6 border-l-4 border-[#ffb86c]"
         >
           <span className="font-mono text-[8px] sm:text-[10px] tracking-[0.5em] text-[#ffb86c] uppercase mb-2 block">
             BIOMETRIC_DATA // TELEMETRY
@@ -368,9 +186,7 @@ export default function ProjectsAndStats() {
           ))}
         </div>
 
-        {/* Activity Heatmap - GitHub/LeetCode Style */}
         <div className="bg-[#0d1117] border border-white/10 overflow-hidden">
-          {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-4 sm:p-6 border-b border-white/10 bg-white/[0.02]">
             <div className="flex-1">
               <span className="font-mono text-[8px] sm:text-[10px] tracking-[0.3em] text-[#ffb86c] uppercase block mb-1">CONTRIBUTION_TIMELINE</span>
@@ -385,12 +201,11 @@ export default function ProjectsAndStats() {
             </button>
           </div>
 
-          {/* Legend */}
           <div className="flex justify-between items-center px-4 sm:px-6 pt-4 sm:pt-6 pb-2 sm:pb-3">
-            <span className="font-mono text-[7px] sm:text-[8px] text-[#849495] uppercase">LESS</span>
+
             <div className="flex gap-1 sm:gap-2 items-center flex-1 mx-2 sm:mx-4">
-              {[0, 1, 2, 3].map((level) => {
-                const opacities = [0.08, 0.3, 0.55, 1];
+              {[0, 1, 2, 3, 4].map((level) => {
+                const opacities = [0.08, 0.3, 0.55, 0.8, 1];
                 return (
                   <div
                     key={level}
@@ -403,44 +218,50 @@ export default function ProjectsAndStats() {
             <span className="font-mono text-[7px] sm:text-[8px] text-[#849495] uppercase">MORE</span>
           </div>
 
-          {/* Heatmap Grid */}
-          <div className="p-4 sm:p-6 overflow-x-auto scrollbar-hide">
+          <div className="p-4 sm:p-6 w-full flex justify-center overflow-x-auto scrollbar-hide min-h-[180px] sm:min-h-[200px]">
+            <style>{`
+              .leetcode-heatmap {
+                transform: scale(1);
+                transform-origin: center;
+                display: flex;
+                justify-content: center;
+                width: 100%;
+              }
+              
+              .leetcode-heatmap svg {
+                width: auto !important;
+                height: auto !important;
+              }
+              
+              .leetcode-heatmap svg rect {
+                stroke: rgba(0, 255, 65, 0.3) !important;
+                stroke-width: 1 !important;
+              }
+              
+              /* Target all rect elements and apply green gradient */
+              .leetcode-heatmap svg rect[fill] {
+                fill: rgba(0, 255, 65, 0.15) !important;
+              }
+              
+              /* Month labels */
+              .leetcode-heatmap svg text {
+                fill: #849495 !important;
+                font-family: 'Courier New', monospace !important;
+                font-size: 11px !important;
+              }
+              
+              /* Day number labels inside cells */
+              .leetcode-heatmap svg tspan {
+                fill: #849495 !important;
+              }
+            `}</style>
             {heatSrc === 'github' ? (
-              // GitHub Heatmap
-              <div className="flex gap-1 sm:gap-1.5 min-w-max">
-                {Array.from({ length: 52 }).map((_, week) => (
-                  <div key={week} className="flex flex-col gap-1 sm:gap-1.5">
-                    {Array.from({ length: 7 }).map((_, day) => {
-                      const val = ghHeat[week * 7 + day] || 0;
-                      // Better opacity mapping for levels 0-4
-                      let opacity = 0.08;
-                      if (val === 1) opacity = 0.3;
-                      else if (val === 2) opacity = 0.55;
-                      else if (val === 3) opacity = 0.8;
-                      else if (val >= 4) opacity = 1;
-                      
-                      return (
-                        <div 
-                          key={day} 
-                          className="w-2 h-2 sm:w-3 sm:h-3 rounded-[1px] transition-all duration-300 hover:ring-2 hover:ring-[#00ff41] cursor-default" 
-                          title={`Week ${week + 1}, Day ${day + 1}: Level ${val}`}
-                          style={{ 
-                            background: `rgba(0, 255, 65, ${opacity})`,
-                            boxShadow: val > 2 ? `0 0 6px rgba(0, 255, 65, ${Math.min(opacity, 0.6)})` : 'none'
-                          }} 
-                        />
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
+              <GitHubCalendar username="trs-saurav" />
             ) : (
-              // LeetCode Heatmap - Using react-leetcode library
-              <LeetCodeHeatmapWrapper username="trs_saurav" />
+              <LeetCodeHeatmap username="trs_saurav" />
             )}
           </div>
 
-          {/* Footer Info */}
           <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-white/10 bg-white/[0.02]">
             <p className="font-mono text-[7px] sm:text-[8px] text-[#849495] uppercase">
               {heatSrc === 'github' ? 'GITHUB contributions tracked across 52 weeks' : 'LEETCODE activities tracked across 52 weeks'}
@@ -449,5 +270,5 @@ export default function ProjectsAndStats() {
         </div>
       </div>
     </section>
-  );n
+  );
 }
