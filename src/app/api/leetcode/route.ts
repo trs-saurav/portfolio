@@ -72,8 +72,8 @@ async function fetchLeetCodeStats(username: string): Promise<LeetCodeStats> {
     return {
       totalSolved: acCount,
       totalSubmissions: {
-        submissions: acCount,
-        accepted: totalCount,
+        submissions: totalCount,
+        accepted: acCount,
       },
       acceptanceRate: `${acceptanceRate}%`,
     };

@@ -100,6 +100,11 @@ export function LeetCodeHeatmap({ username, year = new Date().getFullYear() }: L
     return calendars;
   }, [year, calendarData]);
 
+  const cellSize = 11;
+  const cellPadding = 1;
+  const cellSpacing = cellSize + cellPadding;
+  const dayLabelWidth = 16;
+
   const getColorForCount = (count: number): string => {
     if (count === 0) return '#161b22';
     if (count < 2) return 'rgba(0, 255, 65, 0.2)';
@@ -110,8 +115,66 @@ export function LeetCodeHeatmap({ username, year = new Date().getFullYear() }: L
 
   if (loading) {
     return (
-      <div className="w-full h-[200px] flex items-center justify-center bg-[#0d1117]/50 border border-white/10">
-        <div className="font-mono text-[10px] text-[#849495]">LOADING_CALENDAR...</div>
+      <div className="w-full overflow-x-auto scrollbar-hide md:flex md:justify-center">
+        <div className="bg-[#0d1117]/50 rounded px-1 py-2 inline-block md:inline-flex">
+          <div className="flex gap-2" style={{ minWidth: 'min-content' }}>
+            {Array.from({ length: 12 }).map((_, monthIdx) => {
+              const emptyWeeks = [
+                [null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null],
+              ];
+              const monthSvgWidth = (monthIdx === 0 ? dayLabelWidth : 0) + emptyWeeks.length * cellSpacing + 2;
+              const monthSvgHeight = 16 + 7 * cellSpacing + 2;
+              
+              return (
+                <div key={`month-${monthIdx}`} className="flex flex-col items-center flex-shrink-0">
+                  <h3 className="text-[10px] font-mono font-bold text-[#849495] mb-0.5">
+                    {MONTHS[monthIdx]}
+                  </h3>
+                  <svg
+                    width={monthSvgWidth}
+                    height={monthSvgHeight}
+                    style={{ display: 'block' }}
+                  >
+                    {monthIdx === 0 && DAYS.map((day, dayIdx) => (
+                      <text
+                        key={`day-${dayIdx}`}
+                        x={4}
+                        y={16 + dayIdx * cellSpacing + cellSize / 2}
+                        fontSize="7"
+                        fill="#849495"
+                        fontFamily="'Courier New', monospace"
+                        textAnchor="end"
+                        alignmentBaseline="middle"
+                      >
+                        {day}
+                      </text>
+                    ))}
+                    
+                    {emptyWeeks.map((week, weekIdx) =>
+                      week.map((_, dayIdx) => (
+                        <rect
+                          key={`${weekIdx}-${dayIdx}`}
+                          x={(monthIdx === 0 ? dayLabelWidth : 0) + weekIdx * cellSpacing}
+                          y={16 + dayIdx * cellSpacing}
+                          width={cellSize}
+                          height={cellSize}
+                          fill="#161b22"
+                          stroke="rgba(0, 255, 65, 0.15)"
+                          strokeWidth={0.5}
+                          rx={2}
+                        />
+                      ))
+                    )}
+                  </svg>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     );
   }
@@ -132,19 +195,13 @@ export function LeetCodeHeatmap({ username, year = new Date().getFullYear() }: L
     );
   }
 
-  const cellSize = 11;
-  const cellPadding = 1;
-  const cellSpacing = cellSize + cellPadding;
-  const dayLabelWidth = 16;
-
   return (
-    <div className="w-full flex justify-center">
-      <div className="bg-[#0d1117]/50 rounded px-1 py-2">
-        <div className="overflow-x-auto scrollbar-hide">
-          <div className="flex gap-2" style={{ minWidth: 'min-content' }}>
+    <div className="w-full overflow-x-auto scrollbar-hide md:flex md:justify-center">
+      <div className="bg-[#0d1117]/50 rounded px-1 py-2 inline-block md:inline-flex">
+        <div className="flex gap-2" style={{ minWidth: 'min-content' }}>
           {monthCalendars.map((calendar, calendarIdx) => {
-            const monthSvgWidth = (calendarIdx === 0 ? dayLabelWidth : 0) + 7 * cellSpacing + 2;
-            const monthSvgHeight = 16 + calendar.weeks.length * cellSpacing + 2;
+            const monthSvgWidth = (calendarIdx === 0 ? dayLabelWidth : 0) + calendar.weeks.length * cellSpacing + 2;
+            const monthSvgHeight = 16 + 7 * cellSpacing + 2;
             
             return (
               <div key={`month-${calendar.month}`} className="flex flex-col items-center flex-shrink-0">
@@ -211,7 +268,6 @@ export function LeetCodeHeatmap({ username, year = new Date().getFullYear() }: L
           })}
         </div>
       </div>
-    </div>
     </div>
   );
 }
