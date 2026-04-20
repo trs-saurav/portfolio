@@ -15,8 +15,10 @@ const NODES = [
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const [status, setStatus] = useState('idle');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [localTime, setLocalTime] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const tick = () => setLocalTime(
@@ -27,10 +29,45 @@ export default function Contact() {
     return () => clearInterval(iv);
   }, []);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+    setErrorMessage('');
     setStatus('sending');
-    setTimeout(() => setStatus('sent'), 1500);
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.errors) {
+          // Handle Zod validation errors
+          const validationErrors: Record<string, string> = {};
+          data.errors.forEach((error: any) => {
+            validationErrors[error.path[0]] = error.message;
+          });
+          setErrors(validationErrors);
+        } else {
+          setErrorMessage(data.message || 'Failed to send email');
+        }
+        setStatus('error');
+      } else {
+        setStatus('sent');
+        setForm({ name: '', email: '', message: '' });
+        // Reset success message after 5 seconds
+        setTimeout(() => setStatus('idle'), 5000);
+      }
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'An error occurred');
+      setStatus('error');
+    }
   };
 
   return (
@@ -118,26 +155,92 @@ export default function Contact() {
                     <h3 className="font-bold text-white uppercase tracking-widest mb-1 text-sm italic">SIGNAL_TRANSMITTED</h3>
                     <p className="font-mono text-[10px] text-[#849495] uppercase">&gt; ACK RECEIVED // ETA &lt; 24H</p>
                   </motion.div>
+                ) : status === 'error' ? (
+                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex-1 flex flex-col items-center justify-center text-center py-10">
+                    <div className="w-12 h-12 border border-red-500 flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-red-500"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    </div>
+                    <h3 className="font-bold text-red-500 uppercase tracking-widest mb-1 text-sm italic">TRANSMISSION_FAILED</h3>
+                    <p className="font-mono text-[10px] text-red-400 uppercase mb-4">&gt; {errorMessage || 'An error occurred'}</p>
+                    <motion.button
+                      onClick={() => setStatus('idle')}
+                      className="px-6 py-2 border border-red-500 text-red-500 font-mono text-[9px] uppercase tracking-widest hover:bg-red-500/10 transition-all"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      [ RETRY ]
+                    </motion.button>
+                  </motion.div>
                 ) : (
                   <form onSubmit={submit} className="space-y-6 flex flex-col flex-1">
                     <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-4" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.1, staggerChildren: 0.1 }}>
                       <motion.div className="space-y-2" initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
                         <label className="font-mono text-[8px] text-[#00ff41] tracking-widest uppercase">Identity_Token</label>
-                        <motion.input required className="w-full bg-white/[0.03] border border-white/10 p-3 text-xs font-mono text-white outline-none focus:border-[#00ff41] focus:bg-white/[0.05] transition-all" placeholder="GUEST_NAME" value={form.name} onChange={e => setForm({...form, name: e.target.value})} whileFocus={{ boxShadow: "0 0 15px rgba(0, 255, 65, 0.2)" }} />
+                        <motion.input
+                          required
+                          className={`w-full bg-white/[0.03] border p-3 text-xs font-mono text-white outline-none transition-all ${
+                            errors.name ? 'border-red-500 bg-red-500/5' : 'border-white/10 focus:border-[#00ff41] focus:bg-white/[0.05]'
+                          }`}
+                          placeholder="GUEST_NAME"
+                          value={form.name}
+                          onChange={e => {
+                            setForm({...form, name: e.target.value});
+                            if (errors.name) setErrors({...errors, name: ''});
+                          }}
+                          whileFocus={{ boxShadow: "0 0 15px rgba(0, 255, 65, 0.2)" }}
+                        />
+                        {errors.name && <p className="text-red-400 font-mono text-[7px] uppercase">{errors.name}</p>}
                       </motion.div>
                       <motion.div className="space-y-2" initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
                         <label className="font-mono text-[8px] text-[#00ff41] tracking-widest uppercase">Return_Path</label>
-                        <motion.input required type="email" className="w-full bg-white/[0.03] border border-white/10 p-3 text-xs font-mono text-white outline-none focus:border-[#00ff41] focus:bg-white/[0.05] transition-all" placeholder="USER@ENDPOINT.NET" value={form.email} onChange={e => setForm({...form, email: e.target.value})} whileFocus={{ boxShadow: "0 0 15px rgba(0, 255, 65, 0.2)" }} />
+                        <motion.input
+                          required
+                          type="email"
+                          className={`w-full bg-white/[0.03] border p-3 text-xs font-mono text-white outline-none transition-all ${
+                            errors.email ? 'border-red-500 bg-red-500/5' : 'border-white/10 focus:border-[#00ff41] focus:bg-white/[0.05]'
+                          }`}
+                          placeholder="USER@ENDPOINT.NET"
+                          value={form.email}
+                          onChange={e => {
+                            setForm({...form, email: e.target.value});
+                            if (errors.email) setErrors({...errors, email: ''});
+                          }}
+                          whileFocus={{ boxShadow: "0 0 15px rgba(0, 255, 65, 0.2)" }}
+                        />
+                        {errors.email && <p className="text-red-400 font-mono text-[7px] uppercase">{errors.email}</p>}
                       </motion.div>
                     </motion.div>
                     <motion.div className="space-y-2 flex-1 flex flex-col" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.35 }}>
                       <label className="font-mono text-[8px] text-[#00ff41] tracking-widest uppercase">Message_Payload</label>
-                      <motion.textarea required className="w-full bg-white/[0.03] border border-white/10 p-3 text-xs font-mono text-white outline-none focus:border-[#00ff41] focus:bg-white/[0.05] transition-all flex-1 min-h-[140px] resize-none" placeholder="[ ENTER_ENCRYPTED_DATA ]" value={form.message} onChange={e => setForm({...form, message: e.target.value})} whileFocus={{ boxShadow: "0 0 15px rgba(0, 255, 65, 0.2)" }} />
+                      <motion.textarea
+                        required
+                        className={`w-full bg-white/[0.03] border p-3 text-xs font-mono text-white outline-none transition-all flex-1 min-h-[140px] resize-none ${
+                          errors.message ? 'border-red-500 bg-red-500/5' : 'border-white/10 focus:border-[#00ff41] focus:bg-white/[0.05]'
+                        }`}
+                        placeholder="[ ENTER_ENCRYPTED_DATA ]"
+                        value={form.message}
+                        onChange={e => {
+                          setForm({...form, message: e.target.value});
+                          if (errors.message) setErrors({...errors, message: ''});
+                        }}
+                        whileFocus={{ boxShadow: "0 0 15px rgba(0, 255, 65, 0.2)" }}
+                      />
+                      {errors.message && <p className="text-red-400 font-mono text-[7px] uppercase">{errors.message}</p>}
                     </motion.div>
                     <motion.div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-4" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.45 }}>
                       <motion.span className="font-mono text-[8px] text-[#849495] tracking-[0.2em] uppercase" animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 3, repeat: Infinity }}>Encryption: AES_256_Active</motion.span>
                       <Magnet magnetStrength={0.15}>
-                        <motion.button type="submit" disabled={status === 'sending'} className="px-8 py-3 border border-[#00ff41] text-[#00ff41] font-mono text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#00ff41]/10 transition-all flex items-center gap-3 hover:shadow-[0_0_20px_rgba(0,255,65,0.3)]" whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                        <motion.button
+                          type="submit"
+                          disabled={status === 'sending'}
+                          className={`px-8 py-3 border font-mono text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-3 ${
+                            status === 'sending'
+                              ? 'border-gray-500 text-gray-500 opacity-50'
+                              : 'border-[#00ff41] text-[#00ff41] hover:bg-[#00ff41]/10 hover:shadow-[0_0_20px_rgba(0,255,65,0.3)]'
+                          }`}
+                          whileHover={status !== 'sending' ? { scale: 1.05, y: -2 } : {}}
+                          whileTap={status !== 'sending' ? { scale: 0.95 } : {}}
+                        >
                           {status === 'sending' ? 'TRANSMITTING...' : '[ INITIALIZE_SEND → ]'}
                         </motion.button>
                       </Magnet>

@@ -139,13 +139,13 @@ export default function Navigation() {
 
           {/* Resume */}
           <a
-            href="/resume.pdf"
+            href="/SAURAV-KUMAR-FlowCV-Resume-20260203%20(3).pdf"
             download
             className="flex flex-col gap-0.5 no-underline group"
           >
             <span className="font-mono text-[9px] tracking-[0.2em] text-[#849495] uppercase group-hover:text-[#ffb86c]/60 transition-colors">ACCESS_POINT</span>
             <span className="text-[#ffb86c] text-[10px] font-bold tracking-[0.15em] group-hover:text-[#ff9d00] transition-colors">
-              MANIFEST_PDF
+              RESUME.PDF
             </span>
           </a>
         </div>
@@ -202,7 +202,7 @@ export default function Navigation() {
                   </a>
                 ))}
               </div>
-              <a href="/resume.pdf" download className="flex justify-center items-center gap-2 text-[#0a0a0a] bg-[#00ff41] p-4 font-bold tracking-[0.15em] hover:bg-[#e9ffe9] transition-colors uppercase font-mono shadow-[0_0_15px_rgba(0,255,65,0.3)]">
+              <a href="/SAURAV-KUMAR-FlowCV-Resume-20260203%20(3).pdf" download className="flex justify-center items-center gap-2 text-[#0a0a0a] bg-[#00ff41] p-4 font-bold tracking-[0.15em] hover:bg-[#e9ffe9] transition-colors uppercase font-mono shadow-[0_0_15px_rgba(0,255,65,0.3)]">
                 MANIFEST_PDF (RESUME)
               </a>
             </div>

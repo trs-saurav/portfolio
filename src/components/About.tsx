@@ -154,7 +154,8 @@ export default function About() {
             </div>
             <div className="bg-[#111111] p-6 flex items-center justify-end">
               <a
-                href="/resume.pdf"
+                href="/SAURAV-KUMAR-FlowCV-Resume-20260203%20(3).pdf"
+                download
                 className="group flex items-center gap-4 text-white font-bold text-xs tracking-[0.2em] uppercase border-b border-[#00ff41] pb-1 hover:text-[#00ff41] transition-all"
               >
                 REQUEST_CV_v2.0

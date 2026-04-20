@@ -187,7 +187,7 @@ export default function Footer() {
             >
               <Magnet magnetStrength={0.15}>
                 <motion.a 
-                  href="/resume.pdf" 
+                  href="/SAURAV-KUMAR-FlowCV-Resume-20260203%20(3).pdf" 
                   download 
                   className="text-[#ffb86c] text-[9px] sm:text-[10px] font-black tracking-widest border border-[#ffb86c]/30 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-[#ffb86c]/10 transition-all uppercase"
                   whileHover={{ 
@@ -201,7 +201,7 @@ export default function Footer() {
                     visible: { opacity: 1, y: 0 },
                   }}
                 >
-                  ⬇ MANIFEST_PDF
+                  ⬇ RESUME_CV
                 </motion.a>
               </Magnet>
               <Magnet magnetStrength={0.15}>
