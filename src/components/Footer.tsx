@@ -58,7 +58,7 @@ export default function Footer() {
               >
                 SAURAV_KUMAR
               </motion.span>
-              <span className="text-[#00ff41]/50 text-[9px] sm:text-[10px] tracking-[0.3em] uppercase mt-1 sm:mt-2 block">SYNTHETIC_ARCHITECT // DEL_IN</span>
+              <span className="text-[#00ff41]/50 text-[9px] sm:text-[10px] tracking-[0.3em] uppercase mt-1 sm:mt-2 block">FULL_STACK // DEL_IN</span>
             </div>
             <motion.div 
               className="space-y-1 text-[10px] sm:text-[11px] leading-relaxed text-[#849495]"

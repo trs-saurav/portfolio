@@ -217,7 +217,7 @@ export default function Hero() {
                   <SplitText text="Saurav Kumar" delay={0.3} duration={0.08} />
                 </h2>
                 <p className="text-[9px] sm:text-[10px] md:text-xs text-[#00ff41]/50 tracking-[0.6em] uppercase font-mono">
-                  <DecryptedText text="Full_Stack // Systems_Designer" maxIterations={12} speed={50} />
+                  <DecryptedText text="Full_Stack // AI_ML" maxIterations={12} speed={50} />
                 </p>
               </div>
 
